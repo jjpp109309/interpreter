@@ -1,14 +1,28 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+enum TokenType {
+    ILLEGAL,
+    EOF,
+
+    // identifieres + literals
+    INDENT,
+    INT,
+
+    // operators
+    ASSIGN,
+    PLUS,
+
+    // delimiters
+    COMMA,
+    SEMICOLON,
+    LPAREN,
+    RPAREN,
+
+    // keysords
+    LBRACE,
+    RBRACE,
+}
+struct Token {
+    ttype: TokenType,
+    literal: String,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
