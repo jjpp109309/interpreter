@@ -4,7 +4,7 @@ enum TokenType {
     EOF,
 
     // identifieres + literals
-    INDENT,
+    IDENT,
     INT,
 
     // operators
@@ -16,10 +16,12 @@ enum TokenType {
     SEMICOLON,
     LPAREN,
     RPAREN,
-
-    // keysords
     LBRACE,
     RBRACE,
+
+    // keysords
+    FUNCTION,
+    LET,
 }
 
 #[derive(Debug, PartialEq, Eq)]
