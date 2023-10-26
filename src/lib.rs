@@ -22,7 +22,7 @@ enum TokenType {
     RBRACE,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 struct Token {
     ttype: TokenType,
     literal: Option<char>,
@@ -101,9 +101,8 @@ mod test {
 
         for token in tokens {
             let tok = l.next_token();
-            println!("{:?}", tok.literal);
-            assert_eq!(tok.ttype, token.ttype);
-            assert_eq!(tok.literal, token.literal);
+            assert_eq!(tok, token);
         }
+        
     }
 }
