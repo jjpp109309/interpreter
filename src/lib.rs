@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 #[derive(Debug, PartialEq, Eq)]
 enum TokenType {
     ILLEGAL,
@@ -22,6 +24,16 @@ enum TokenType {
     // keysords
     FUNCTION,
     LET,
+}
+
+impl TokenType {
+    fn lookup_ident(literal: String) -> TokenType {
+        match literal.as_str() {
+            "fn" => Self::FUNCTION,
+            "let" => Self::LET,
+            _ => Self::IDENT
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -77,7 +89,17 @@ impl Lexer {
             "+" => Self::new_token(TokenType::PLUS, &self.ch),
             "{" => Self::new_token(TokenType::LBRACE, &self.ch),
             "}" => Self::new_token(TokenType::RBRACE, &self.ch),
-            _ => Self::new_token(TokenType::EOF, &self.ch),
+            "" => Self::new_token(TokenType::EOF, &self.ch),
+            _ => {
+                if Self::is_letter(&self.ch) {
+                    let literal = self.get_identifier();
+                    let token_type = TokenType::lookup_ident(literal);
+
+                    Self::new_token(TokenType::IDENT, &literal)
+                } else {
+                    Self::new_token(TokenType::ILLEGAL, &self.ch)
+                }
+            }
         };
 
         self.read_char();
@@ -86,6 +108,24 @@ impl Lexer {
 
     fn new_token(ttype: TokenType, literal: &String) -> Token {
         Token { ttype, literal: literal.to_owned() }
+    }
+
+    fn is_letter(letter: &String) -> bool {
+        let ident_characters = String::from(
+            "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_"
+        );
+
+        ident_characters.contains(letter)
+    }
+
+    fn get_identifier(&mut self) -> String {
+        let position = self.position;
+        let character = self.ch.to_string();
+        while Self::is_letter(&character) {
+            self.read_char();
+        };
+
+        return self.input[position..self.position].join("")
     }
 }
 
