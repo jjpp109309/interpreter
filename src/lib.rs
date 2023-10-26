@@ -1,7 +1,5 @@
-use std::collections::HashMap;
-
 #[derive(Debug, PartialEq, Eq)]
-enum TokenType {
+pub enum TokenType {
     ILLEGAL,
     EOF,
 
@@ -27,7 +25,7 @@ enum TokenType {
 }
 
 impl TokenType {
-    fn lookup_ident(literal: String) -> TokenType {
+    fn lookup_ident(literal: &String) -> TokenType {
         match literal.as_str() {
             "fn" => Self::FUNCTION,
             "let" => Self::LET,
@@ -37,20 +35,21 @@ impl TokenType {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct Token {
+pub struct Token {
     ttype: TokenType,
     literal: String,
 }
 
-struct Lexer {
-    input: Vec<String>,
-    position: usize,
-    read_position: usize,
-    ch: String,
+#[derive(Debug)]
+pub struct Lexer {
+    pub input: Vec<String>,
+    pub position: usize,
+    pub read_position: usize,
+    pub ch: String,
 }
 
 impl Lexer {
-    fn new(input: String) -> Self {
+    pub fn new(input: String) -> Self {
         let input_chars = input
             .chars()
             .map(|char| char.to_string())
@@ -67,8 +66,8 @@ impl Lexer {
         l
     }
 
-    fn read_char(&mut self) {
-        if self.read_position >= self.input.len().try_into().unwrap() {
+    pub fn read_char(&mut self) {
+            if self.read_position >= self.input.len().try_into().unwrap() {
             self.ch = String::from("");
         } else {
             self.ch = self.input[self.read_position].to_owned();
@@ -78,7 +77,9 @@ impl Lexer {
         self.read_position += 1;
     }
 
-    fn next_token(&mut self) -> Token {
+    pub fn next_token(&mut self) -> Token {
+        self.skip_white_space();
+
         let character = self.ch.as_str();
         let token = match character {
             "=" => Self::new_token(TokenType::ASSIGN, &self.ch),
@@ -92,10 +93,16 @@ impl Lexer {
             "" => Self::new_token(TokenType::EOF, &self.ch),
             _ => {
                 if Self::is_letter(&self.ch) {
-                    let literal = self.get_identifier();
-                    let token_type = TokenType::lookup_ident(literal);
+                    let literal = self.read_identifier();
+                    let token_type = TokenType::lookup_ident(&literal);
 
-                    Self::new_token(TokenType::IDENT, &literal)
+                    Self::new_token(token_type, &literal)
+                } else if Self::is_digit(&self.ch) {
+                    let literal = self.read_number();
+                    let token_type = TokenType::INT;
+
+                    Self::new_token(token_type, &literal)
+
                 } else {
                     Self::new_token(TokenType::ILLEGAL, &self.ch)
                 }
@@ -106,11 +113,18 @@ impl Lexer {
         token
     }
 
-    fn new_token(ttype: TokenType, literal: &String) -> Token {
+    pub fn skip_white_space(&mut self) {
+        while " " == self.ch  || "\t" == self.ch || "\n" == self.ch || "\r" == self.ch{
+            println!("skipped space!");
+            self.read_char()
+        }
+    }
+
+    pub fn new_token(ttype: TokenType, literal: &String) -> Token {
         Token { ttype, literal: literal.to_owned() }
     }
 
-    fn is_letter(letter: &String) -> bool {
+    pub fn is_letter(letter: &String) -> bool {
         let ident_characters = String::from(
             "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_"
         );
@@ -118,14 +132,27 @@ impl Lexer {
         ident_characters.contains(letter)
     }
 
-    fn get_identifier(&mut self) -> String {
+    pub fn read_identifier(&mut self) -> String {
         let position = self.position;
-        let character = self.ch.to_string();
-        while Self::is_letter(&character) {
+
+        while Self::is_letter(&self.input[self.read_position]) {
             self.read_char();
         };
 
-        return self.input[position..self.position].join("")
+        self.input[position..self.read_position].join("")
+    }
+
+    pub fn is_digit(character: &String) -> bool {
+        "1234567890".contains(character)
+    }
+
+    pub fn read_number(&mut self) -> String {
+        let position = self.position;
+
+        while Self::is_digit(&self.input[self.read_position]) {
+            self.read_char();
+        };
+        self.input[position..self.read_position].join("")
     }
 }
 
@@ -158,15 +185,14 @@ mod test {
 
     #[test]
     fn next_token2() {
-        let input = String::from("
+        let input = String::from("\
 let five = 5;
 let ten = 10;
 
 let add = fn(x, y) {
     x + y;
 };
-let result = add(five, ten);
-        ");
+let result = add(five, ten);");
 
         let tokens = vec![
             Token { ttype: TokenType::LET, literal: "let".to_string() },
@@ -207,5 +233,13 @@ let result = add(five, ten);
             Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
             Token { ttype: TokenType::EOF, literal: "".to_string() }, 
         ];
+
+        let mut l = Lexer::new(input);
+
+        for token in tokens {
+            let tok = l.next_token();
+            println!("{:?}", tok);
+            assert_eq!(tok, token);
+        }
     }
 }
