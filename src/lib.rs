@@ -114,56 +114,56 @@ mod test {
         }
     }
 
-    // #[test]
-//     fn next_token2() {
-//         let input = String::from("
-// let five = 5;
-// let ten = 10;
-//
-// let add = fn(x, y) {
-//     x + y;
-// };
-// let result = add(five, ten);
-//         ");
-//
-//         let tokens = vec![
-//             Token { ttype: TokenType::LET, literal: Some('let') },
-//             Token { ttype: TokenType::IDENT, literal: Some('five') },
-//             Token { ttype: TokenType::ASSIGN, literal: Some('=') },
-//             Token { ttype: TokenType::INT, literal: Some('5') },
-//             Token { ttype: TokenType::SEMICOLON, literal: Some(';') },
-//             Token { ttype: TokenType::LET, literal: Some('let') },
-//             Token { ttype: TokenType::IDENT, literal: Some('ten') },
-//             Token { ttype: TokenType::ASSIGN, literal: Some('=') },
-//             Token { ttype: TokenType::INT, literal: Some('10') },
-//             Token { ttype: TokenType::SEMICOLON, literal: Some(';') },
-//             Token { ttype: TokenType::LET, literal: Some('let') },
-//             Token { ttype: TokenType::IDENT, literal: Some('add') },
-//             Token { ttype: TokenType::ASSIGN, literal: Some('=') },
-//             Token { ttype: TokenType::FUNCTION, literal: Some('fn') },
-//             Token { ttype: TokenType::LPAREN, literal: Some('(') },
-//             Token { ttype: TokenType::IDENT, literal: Some('x') },
-//             Token { ttype: TokenType::COMMA, literal: Some(',') },
-//             Token { ttype: TokenType::IDENT, literal: Some('y') },
-//             Token { ttype: TokenType::RPAREN, literal: Some(')') },
-//             Token { ttype: TokenType::LBRACE, literal: Some('{') },
-//             Token { ttype: TokenType::IDENT, literal: Some('x')},
-//             Token { ttype: TokenType::PLUS, literal: Some('+') },
-//             Token { ttype: TokenType::IDENT, literal: Some('y') },
-//             Token { ttype: TokenType::SEMICOLON, literal: Some(';') },
-//             Token { ttype: TokenType::RBRACE, literal: Some('}') },
-//             Token { ttype: TokenType::SEMICOLON, literal: Some(';') },
-//             Token { ttype: TokenType::LET, literal: Some('let') },
-//             Token { ttype: TokenType::IDENT, literal: Some('result') },
-//             Token { ttype: TokenType::ASSIGN, literal: Some('=') },
-//             Token { ttype: TokenType::IDENT, literal: Some('add') },
-//             Token { ttype: TokenType::LPAREN, literal: Some('(') },
-//             Token { ttype: TokenType::IDENT, literal: Some('five') },
-//             Token { ttype: TokenType::COMMA, literal: Some(',') },
-//             Token { ttype: TokenType::IDENT, literal: Some('ten') },
-//             Token { ttype: TokenType::RPAREN, literal: Some(')') },
-//             Token { ttype: TokenType::SEMICOLON, literal: Some(';') },
-//             Token { ttype: TokenType::EOF, literal: None }, 
-//         ];
-//     }
+    #[test]
+    fn next_token2() {
+        let input = String::from("
+let five = 5;
+let ten = 10;
+
+let add = fn(x, y) {
+    x + y;
+};
+let result = add(five, ten);
+        ");
+
+        let tokens = vec![
+            Token { ttype: TokenType::LET, literal: "let".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "five".to_string() },
+            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
+            Token { ttype: TokenType::INT, literal: "5".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::LET, literal: "let".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "ten".to_string() },
+            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
+            Token { ttype: TokenType::INT, literal: "10".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::LET, literal: "let".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "add".to_string() },
+            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
+            Token { ttype: TokenType::FUNCTION, literal: "fn".to_string() },
+            Token { ttype: TokenType::LPAREN, literal: "(".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "x".to_string() },
+            Token { ttype: TokenType::COMMA, literal: ",".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "y".to_string() },
+            Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
+            Token { ttype: TokenType::LBRACE, literal: "{".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "x".to_string()},
+            Token { ttype: TokenType::PLUS, literal: "+".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "y".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::RBRACE, literal: "}".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::LET, literal: "let".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "result".to_string() },
+            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "add".to_string() },
+            Token { ttype: TokenType::LPAREN, literal: "(".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "five".to_string() },
+            Token { ttype: TokenType::COMMA, literal: ",".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "ten".to_string() },
+            Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::EOF, literal: "".to_string() }, 
+        ];
+    }
 }
