@@ -10,6 +10,13 @@ pub enum TokenType {
     // operators
     ASSIGN,
     PLUS,
+    MINUS,
+    BANG,
+    ASTERISK,
+    SLASH,
+
+    LT,
+    GT,
 
     // delimiters
     COMMA,
@@ -88,6 +95,12 @@ impl Lexer {
             ")" => Self::new_token(TokenType::RPAREN, &self.ch),
             "," => Self::new_token(TokenType::COMMA, &self.ch),
             "+" => Self::new_token(TokenType::PLUS, &self.ch),
+            "-" => Self::new_token(TokenType::MINUS, &self.ch),
+            "*" => Self::new_token(TokenType::ASTERISK, &self.ch),
+            "!" => Self::new_token(TokenType::BANG, &self.ch),
+            "/" => Self::new_token(TokenType::SLASH, &self.ch),
+            "<" => Self::new_token(TokenType::LT, &self.ch),
+            ">" => Self::new_token(TokenType::GT, &self.ch),
             "{" => Self::new_token(TokenType::LBRACE, &self.ch),
             "}" => Self::new_token(TokenType::RBRACE, &self.ch),
             "" => Self::new_token(TokenType::EOF, &self.ch),
@@ -242,4 +255,81 @@ let result = add(five, ten);");
             assert_eq!(tok, token);
         }
     }
+
+    #[test]
+    fn next_token3() {
+        let input = String::from("\
+let five = 5;
+let ten = 10;
+
+let add = fn(x, y) {
+    x + y;
+};
+
+let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;");
+
+        let tokens = vec![
+            Token { ttype: TokenType::LET, literal: "let".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "five".to_string() },
+            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
+            Token { ttype: TokenType::INT, literal: "5".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::LET, literal: "let".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "ten".to_string() },
+            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
+            Token { ttype: TokenType::INT, literal: "10".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::LET, literal: "let".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "add".to_string() },
+            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
+            Token { ttype: TokenType::FUNCTION, literal: "fn".to_string() },
+            Token { ttype: TokenType::LPAREN, literal: "(".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "x".to_string() },
+            Token { ttype: TokenType::COMMA, literal: ",".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "y".to_string() },
+            Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
+            Token { ttype: TokenType::LBRACE, literal: "{".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "x".to_string()},
+            Token { ttype: TokenType::PLUS, literal: "+".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "y".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::RBRACE, literal: "}".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::LET, literal: "let".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "result".to_string() },
+            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "add".to_string() },
+            Token { ttype: TokenType::LPAREN, literal: "(".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "five".to_string() },
+            Token { ttype: TokenType::COMMA, literal: ",".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "ten".to_string() },
+            Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::EOF, literal: "".to_string() },
+            Token { ttype: TokenType::LET, literal: "let".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "result".to_string() },
+            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "add".to_string() },
+            Token { ttype: TokenType::LPAREN, literal: "(".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "five".to_string() },
+            Token { ttype: TokenType::COMMA, literal: ",".to_string() },
+            Token { ttype: TokenType::IDENT, literal: "ten".to_string() },
+            Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::BANG, literal: "!".to_string() },
+            Token { ttype: TokenType::MINUS, literal: "-".to_string() },
+            Token { ttype: TokenType::SLASH, literal: "/".to_string() },
+            Token { ttype: TokenType::ASTERISK, literal: "*".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::INT, literal: "5".to_string() },
+            Token { ttype: TokenType::LT, literal: "<".to_string() },
+            Token { ttype: TokenType::INT, literal: "10".to_string() },
+            Token { ttype: TokenType::GT, literal: ">".to_string() },
+            Token { ttype: TokenType::INT, literal: "5".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+        ];
+    }
+
 }
