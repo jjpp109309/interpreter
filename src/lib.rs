@@ -26,9 +26,14 @@ pub enum TokenType {
     LBRACE,
     RBRACE,
 
-    // keysords
+    // keywords
     FUNCTION,
     LET,
+    TRUE,
+    FALSE,
+    IF,
+    ELSE,
+    RETURN,
 }
 
 impl TokenType {
@@ -36,6 +41,11 @@ impl TokenType {
         match literal.as_str() {
             "fn" => Self::FUNCTION,
             "let" => Self::LET,
+            "true" => Self::TRUE,
+            "false" => Self::FALSE,
+            "if" => Self::IF,
+            "else" => Self::ELSE,
+            "return" => Self::RETURN,
             _ => Self::IDENT
         }
     }
@@ -259,54 +269,10 @@ let result = add(five, ten);");
     #[test]
     fn next_token3() {
         let input = String::from("\
-let five = 5;
-let ten = 10;
-
-let add = fn(x, y) {
-    x + y;
-};
-
-let result = add(five, ten);
 !-/*5;
 5 < 10 > 5;");
 
         let tokens = vec![
-            Token { ttype: TokenType::LET, literal: "let".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "five".to_string() },
-            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
-            Token { ttype: TokenType::INT, literal: "5".to_string() },
-            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
-            Token { ttype: TokenType::LET, literal: "let".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "ten".to_string() },
-            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
-            Token { ttype: TokenType::INT, literal: "10".to_string() },
-            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
-            Token { ttype: TokenType::LET, literal: "let".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "add".to_string() },
-            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
-            Token { ttype: TokenType::FUNCTION, literal: "fn".to_string() },
-            Token { ttype: TokenType::LPAREN, literal: "(".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "x".to_string() },
-            Token { ttype: TokenType::COMMA, literal: ",".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "y".to_string() },
-            Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
-            Token { ttype: TokenType::LBRACE, literal: "{".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "x".to_string()},
-            Token { ttype: TokenType::PLUS, literal: "+".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "y".to_string() },
-            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
-            Token { ttype: TokenType::RBRACE, literal: "}".to_string() },
-            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
-            Token { ttype: TokenType::LET, literal: "let".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "result".to_string() },
-            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "add".to_string() },
-            Token { ttype: TokenType::LPAREN, literal: "(".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "five".to_string() },
-            Token { ttype: TokenType::COMMA, literal: ",".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "ten".to_string() },
-            Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
-            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
             Token { ttype: TokenType::BANG, literal: "!".to_string() },
             Token { ttype: TokenType::MINUS, literal: "-".to_string() },
             Token { ttype: TokenType::SLASH, literal: "/".to_string() },
@@ -319,6 +285,46 @@ let result = add(five, ten);
             Token { ttype: TokenType::GT, literal: ">".to_string() },
             Token { ttype: TokenType::INT, literal: "5".to_string() },
             Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::EOF, literal: "".to_string() }, 
+        ];
+
+        let mut l = Lexer::new(input);
+
+        for token in tokens {
+            let tok = l.next_token();
+            println!("{:?}", tok);
+            assert_eq!(tok, token);
+        }
+    }
+
+    #[test]
+    fn next_token4() {
+    let input = String::from("\
+if (5 < 10) {
+    return true;
+} else {
+    return false;
+}");
+
+        let tokens = vec![
+            Token { ttype: TokenType::IF, literal: "if".to_string() },
+            Token { ttype: TokenType::LPAREN, literal: "(".to_string() },
+            Token { ttype: TokenType::INT, literal: "5".to_string() },
+            Token { ttype: TokenType::LT, literal: "<".to_string() },
+            Token { ttype: TokenType::INT, literal: "10".to_string() },
+            Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
+            Token { ttype: TokenType::LBRACE, literal: "{".to_string() },
+            Token { ttype: TokenType::RETURN, literal: "return".to_string() },
+            Token { ttype: TokenType::TRUE, literal: "true".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::RBRACE, literal: "}".to_string() },
+            Token { ttype: TokenType::ELSE, literal: "else".to_string() },
+            Token { ttype: TokenType::LBRACE, literal: "{".to_string() },
+            Token { ttype: TokenType::RETURN, literal: "return".to_string() },
+            Token { ttype: TokenType::FALSE, literal: "false".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::RBRACE, literal: "}".to_string() },
+            Token { ttype: TokenType::EOF, literal: "".to_string() }, 
         ];
 
         let mut l = Lexer::new(input);
