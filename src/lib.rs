@@ -34,6 +34,8 @@ pub enum TokenType {
     IF,
     ELSE,
     RETURN,
+    EQ,
+    NOT_EQ,
 }
 
 impl TokenType {
@@ -99,7 +101,15 @@ impl Lexer {
 
         let character = self.ch.as_str();
         let token = match character {
-            "=" => Self::new_token(TokenType::ASSIGN, &self.ch),
+            "=" => {
+                if Self::next_char_is_eq(&self) {
+                    self.read_char();
+                    let literal = String::from("==");
+                    Self::new_token(TokenType::EQ, &literal)
+                } else {
+                    Self::new_token(TokenType::ASSIGN, &self.ch)
+                }
+            },
             ";" => Self::new_token(TokenType::SEMICOLON, &self.ch),
             "(" => Self::new_token(TokenType::LPAREN, &self.ch),
             ")" => Self::new_token(TokenType::RPAREN, &self.ch),
@@ -107,7 +117,15 @@ impl Lexer {
             "+" => Self::new_token(TokenType::PLUS, &self.ch),
             "-" => Self::new_token(TokenType::MINUS, &self.ch),
             "*" => Self::new_token(TokenType::ASTERISK, &self.ch),
-            "!" => Self::new_token(TokenType::BANG, &self.ch),
+            "!" => {
+                if Self::next_char_is_eq(&self) {
+                    self.read_char();
+                    let literal = String::from("!=");
+                    Self::new_token(TokenType::NOT_EQ, &literal)
+                } else {
+                    Self::new_token(TokenType::BANG, &self.ch)
+                }
+            }
             "/" => Self::new_token(TokenType::SLASH, &self.ch),
             "<" => Self::new_token(TokenType::LT, &self.ch),
             ">" => Self::new_token(TokenType::GT, &self.ch),
@@ -175,6 +193,10 @@ impl Lexer {
             self.read_char();
         };
         self.input[position..self.read_position].join("")
+    }
+
+    pub fn next_char_is_eq(&self) -> bool {
+        self.input[self.read_position] == "="
     }
 }
 
@@ -325,6 +347,33 @@ if (5 < 10) {
             Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
             Token { ttype: TokenType::RBRACE, literal: "}".to_string() },
             Token { ttype: TokenType::EOF, literal: "".to_string() }, 
+        ];
+
+        let mut l = Lexer::new(input);
+
+        for token in tokens {
+            let tok = l.next_token();
+            println!("{:?}", tok);
+            assert_eq!(tok, token);
+        }
+    }
+
+    #[test]
+    fn next_token5() {
+    let input = String::from("\
+10 == 10;
+10 != 9;");
+
+        let tokens = vec![
+            Token { ttype: TokenType::INT, literal: "10".to_string() },
+            Token { ttype: TokenType::EQ, literal: "==".to_string() },
+            Token { ttype: TokenType::INT, literal: "10".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::INT, literal: "10".to_string() },
+            Token { ttype: TokenType::NOT_EQ, literal: "!=".to_string() },
+            Token { ttype: TokenType::INT, literal: "9".to_string() },
+            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
+            Token { ttype: TokenType::EOF, literal: "".to_string() },
         ];
 
         let mut l = Lexer::new(input);
