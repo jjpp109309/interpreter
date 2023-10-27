@@ -127,8 +127,7 @@ impl Lexer {
     }
 
     pub fn skip_white_space(&mut self) {
-        while " " == self.ch  || "\t" == self.ch || "\n" == self.ch || "\r" == self.ch{
-            println!("skipped space!");
+        while " " == self.ch  || "\t" == self.ch || "\n" == self.ch || "\r" == self.ch {
             self.read_char()
         }
     }
@@ -175,7 +174,7 @@ mod test {
     
     #[test]
     fn next_token() {
-        let input = String::from("=+(){},;");
+        let input = String::from("=+(){}!,;");
         let tokens = vec![
             Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
             Token { ttype: TokenType::PLUS, literal: "+".to_string() },
@@ -183,6 +182,7 @@ mod test {
             Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
             Token { ttype: TokenType::LBRACE, literal: "{".to_string() },
             Token { ttype: TokenType::RBRACE, literal: "}".to_string() },
+            Token { ttype: TokenType::BANG, literal: "!".to_string() },
             Token { ttype: TokenType::COMMA, literal: ",".to_string() },
             Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
             Token { ttype: TokenType::EOF, literal: "".to_string() },
@@ -307,21 +307,11 @@ let result = add(five, ten);
             Token { ttype: TokenType::IDENT, literal: "ten".to_string() },
             Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
             Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
-            Token { ttype: TokenType::EOF, literal: "".to_string() },
-            Token { ttype: TokenType::LET, literal: "let".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "result".to_string() },
-            Token { ttype: TokenType::ASSIGN, literal: "=".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "add".to_string() },
-            Token { ttype: TokenType::LPAREN, literal: "(".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "five".to_string() },
-            Token { ttype: TokenType::COMMA, literal: ",".to_string() },
-            Token { ttype: TokenType::IDENT, literal: "ten".to_string() },
-            Token { ttype: TokenType::RPAREN, literal: ")".to_string() },
-            Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
             Token { ttype: TokenType::BANG, literal: "!".to_string() },
             Token { ttype: TokenType::MINUS, literal: "-".to_string() },
             Token { ttype: TokenType::SLASH, literal: "/".to_string() },
             Token { ttype: TokenType::ASTERISK, literal: "*".to_string() },
+            Token { ttype: TokenType::INT, literal: "5".to_string() },
             Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
             Token { ttype: TokenType::INT, literal: "5".to_string() },
             Token { ttype: TokenType::LT, literal: "<".to_string() },
@@ -330,6 +320,13 @@ let result = add(five, ten);
             Token { ttype: TokenType::INT, literal: "5".to_string() },
             Token { ttype: TokenType::SEMICOLON, literal: ";".to_string() },
         ];
-    }
 
+        let mut l = Lexer::new(input);
+
+        for token in tokens {
+            let tok = l.next_token();
+            println!("{:?}", tok);
+            assert_eq!(tok, token);
+        }
+    }
 }
