@@ -86,7 +86,7 @@ impl Lexer {
     }
 
     pub fn read_char(&mut self) {
-            if self.read_position >= self.input.len().try_into().unwrap() {
+        if self.read_position >= self.input.len().try_into().unwrap() {
             self.ch = String::from("");
         } else {
             self.ch = self.input[self.read_position].to_owned();
