@@ -68,7 +68,7 @@ pub struct Lexer {
 }
 
 impl Lexer {
-    pub fn new(input: String) -> Self {
+    pub fn new(input: &String) -> Self {
         let input_chars = input
             .chars()
             .map(|char| char.to_string())
@@ -220,7 +220,7 @@ mod test {
             Token { ttype: TokenType::Eof, literal: "".to_string() },
         ];
 
-        let mut l = Lexer::new(input);
+        let mut l = Lexer::new(&input);
 
         for token in tokens {
             let tok = l.next_token();
@@ -279,7 +279,7 @@ let result = add(five, ten);");
             Token { ttype: TokenType::Eof, literal: "".to_string() }, 
         ];
 
-        let mut l = Lexer::new(input);
+        let mut l = Lexer::new(&input);
 
         for token in tokens {
             let tok = l.next_token();
@@ -310,7 +310,7 @@ let result = add(five, ten);");
             Token { ttype: TokenType::Eof, literal: "".to_string() }, 
         ];
 
-        let mut l = Lexer::new(input);
+        let mut l = Lexer::new(&input);
 
         for token in tokens {
             let tok = l.next_token();
@@ -349,7 +349,7 @@ if (5 < 10) {
             Token { ttype: TokenType::Eof, literal: "".to_string() }, 
         ];
 
-        let mut l = Lexer::new(input);
+        let mut l = Lexer::new(&input);
 
         for token in tokens {
             let tok = l.next_token();
@@ -376,7 +376,7 @@ if (5 < 10) {
             Token { ttype: TokenType::Eof, literal: "".to_string() },
         ];
 
-        let mut l = Lexer::new(input);
+        let mut l = Lexer::new(&input);
 
         for token in tokens {
             let tok = l.next_token();
