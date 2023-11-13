@@ -55,8 +55,8 @@ impl TokenType {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Token {
-    ttype: TokenType,
-    literal: String,
+    pub ttype: TokenType,
+    pub literal: String,
 }
 
 #[derive(Debug)]
