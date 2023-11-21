@@ -1,5 +1,5 @@
-use interpreter::{Lexer, TokenType};
 
+mod lexer;
 mod repl;
 
 fn main() {
