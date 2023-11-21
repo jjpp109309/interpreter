@@ -1,5 +1,5 @@
 use std::io::{stdin, stdout, Write};
-use crate::{Lexer, TokenType};
+use crate::lexer::{Lexer, TokenType};
 
 pub fn start() {
     println!("Hello! this is the Monkney programming language!");
