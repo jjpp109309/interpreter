@@ -1,5 +1,4 @@
-mod lexer;
-mod repl;
+use interpreter::repl;
 
 fn main() {
     repl::start()
