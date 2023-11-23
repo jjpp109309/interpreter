@@ -1,5 +1,5 @@
 use std::io::{stdin, stdout, Write};
-use crate::TokenType;
+use crate::tokens::TokenType;
 use crate::lexer::Lexer;
 
 pub fn start() {

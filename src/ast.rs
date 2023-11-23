@@ -1,4 +1,5 @@
-use crate::Token;
+use crate::tokens::Token;
+
 trait Node {
     fn token_literal(&self) -> String;
 }

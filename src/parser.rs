@@ -1,6 +1,6 @@
 use crate::lexer::Lexer;
 use crate::ast::Program;
-use crate::Token;
+use crate::tokens::Token;
 
 struct Parser {
     lexer: Lexer,
