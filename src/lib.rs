@@ -1,8 +1,9 @@
 mod lexer;
 mod ast;
+mod parser;
 pub mod repl;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum TokenType {
     Illegal,
     Eof,
@@ -57,7 +58,7 @@ impl TokenType {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Token {
     pub ttype: TokenType,
     pub literal: String,

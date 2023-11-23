@@ -31,7 +31,7 @@ impl Node for Expression {
     }
 }
 
-struct Program {
+pub struct Program {
     statements: Vec<Statement>,
 }
 
