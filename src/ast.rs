@@ -15,7 +15,7 @@ pub trait ExpressionNode {
 pub struct Statement {
     pub token: Token,
     pub name: Identifier,
-    pub value: Expression,
+    // pub value: Expression,
 }
 
 impl Node for Statement {

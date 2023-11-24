@@ -27,7 +27,7 @@ impl Parser {
         while self.cur_token.ttype != TokenType::Eof {
             let statement = self.parse_statement();
 
-            if let Some(s) = statement { statements.push(s) }
+            if let Some(s) = statement { statements.push(s) };
 
             self.next_token();
         }
@@ -37,39 +37,14 @@ impl Parser {
     fn parse_statement(&mut self) -> Option<ast::Statement> {
         match self.cur_token.ttype {
             TokenType::Let => self.parse_let_statement(),
-            TokenType::Illegal => todo!(),
-            TokenType::Eof => todo!(),
-            TokenType::Ident => todo!(),
-            TokenType::Int => todo!(),
-            TokenType::Assign => todo!(),
-            TokenType::Plus => todo!(),
-            TokenType::Minus => todo!(),
-            TokenType::Bang => todo!(),
-            TokenType::Asterisk => todo!(),
-            TokenType::Slash => todo!(),
-            TokenType::Lt => todo!(),
-            TokenType::Gt => todo!(),
-            TokenType::Comma => todo!(),
-            TokenType::SemiColon => todo!(),
-            TokenType::LParen => todo!(),
-            TokenType::RParen => todo!(),
-            TokenType::LBrace => todo!(),
-            TokenType::RBrace => todo!(),
-            TokenType::Function => todo!(),
-            TokenType::True => todo!(),
-            TokenType::False => todo!(),
-            TokenType::If => todo!(),
-            TokenType::Else => todo!(),
-            TokenType::Return => todo!(),
-            TokenType::Eq => todo!(),
-            TokenType::NotEq => todo!(),
+            _ => None
         }
     }
 
     fn parse_let_statement(&mut self) -> Option<ast::Statement> {
         let token = self.cur_token.clone();
 
-        if !self.expect_peek() {
+        if !self.expect_peek(TokenType::Ident) {
             return None
         };
 
@@ -78,24 +53,25 @@ impl Parser {
             value: self.cur_token.literal.clone()
         };
         
-        if !self.expect_peek() {
+        if !self.expect_peek(TokenType::Assign) {
             return None
         };
         
         self.next_token();
 
-        let value = self.parse_expression();
+        while self.cur_token.ttype != TokenType::SemiColon {
+            self.next_token();
+        }
         
-        Some(ast::Statement { token, name, value })
+        Some(ast::Statement { token, name })
     }
 
-    fn expect_peek(&mut self) -> bool {
-        match &self.peek_token.ttype {
-            TokenType::Let => {
-                self.next_token();
-                true
-            },
-            _ => false
+    fn expect_peek(&mut self, ttype: TokenType) -> bool {
+        if ttype == self.peek_token.ttype {
+            self.next_token();
+            true
+        } else {
+            false
         }
     }
 
@@ -134,7 +110,6 @@ let foobar = 838383;");
 
         for (expected, statement) in ident_iter {
             let token_literal = statement.token_literal();
-            println!("{:?}", token_literal);
             assert_eq!(
                 token_literal,
                 String::from("let"),

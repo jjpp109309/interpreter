@@ -118,6 +118,7 @@ impl Lexer {
 
         while Self::is_letter(&self.input[self.read_position]) {
             self.read_char();
+
         };
 
         self.input[position..self.read_position].join("")
