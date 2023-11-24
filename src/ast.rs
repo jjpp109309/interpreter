@@ -1,19 +1,21 @@
 use crate::tokens::Token;
 
-trait Node {
+pub trait Node {
     fn token_literal(&self) -> String;
 }
 
-trait StatementNode {
+pub trait StatementNode {
     fn statement_node(&self);
 }
 
-trait ExpressionNode {
+pub trait ExpressionNode {
     fn expression_node(&self);
 }
 
-struct Statement {
-    token: Token
+pub struct Statement {
+    pub token: Token,
+    pub name: Identifier,
+    pub value: Expression,
 }
 
 impl Node for Statement {
@@ -22,8 +24,8 @@ impl Node for Statement {
     }
 }
 
-struct Expression {
-    token: Token
+pub struct Expression {
+    pub token: Token
 }
 
 impl Node for Expression {
@@ -33,7 +35,7 @@ impl Node for Expression {
 }
 
 pub struct Program {
-    statements: Vec<Statement>,
+    pub statements: Vec<Statement>,
 }
 
 impl Node for Program {
@@ -46,9 +48,9 @@ impl Node for Program {
     }
 }
 
-struct Identifier {
-    token: Token,
-    value: String
+pub struct Identifier {
+    pub token: Token,
+    pub value: String
 }
 
 impl Node for Identifier {
@@ -59,20 +61,4 @@ impl Node for Identifier {
 
 impl ExpressionNode for Identifier {
     fn expression_node(&self) {}
-}
-
-struct LetStatement {
-    token: Token,
-    name: Identifier,
-    value: Expression,
-}
-
-impl Node for LetStatement {
-    fn token_literal(&self) -> String {
-        self.token.literal.to_owned()
-    }
-}
-
-impl StatementNode for LetStatement {
-    fn statement_node(&self) {}
 }
