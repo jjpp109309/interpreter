@@ -44,7 +44,7 @@ impl Parser {
     fn parse_let_statement(&mut self) -> Option<ast::Statement> {
         let token = self.cur_token.clone();
 
-        if !self.expect_peek(TokenType::Ident) {
+        if !self.expect_peek(&TokenType::Ident) {
             return None
         };
 
@@ -53,7 +53,7 @@ impl Parser {
             value: self.cur_token.literal.clone()
         };
         
-        if !self.expect_peek(TokenType::Assign) {
+        if !self.expect_peek(&TokenType::Assign) {
             return None
         };
         
@@ -66,12 +66,14 @@ impl Parser {
         Some(ast::Statement { token, name })
     }
 
-    fn expect_peek(&mut self, ttype: TokenType) -> bool {
-        if ttype == self.peek_token.ttype {
+    fn expect_peek(&mut self, ttype: &TokenType) -> bool {
+        let peek_token = &self.peek_token.ttype;
+
+        if ttype == peek_token {
             self.next_token();
             true
         } else {
-            false
+            panic!("Expected token type to be {:?}, got {:?}", ttype, peek_token);
         }
     }
 
@@ -87,10 +89,17 @@ mod test {
     
     #[test]
     fn let_statement() {
+        // sucessful test
         let input = String::from("\
 let x = 5;
 let y = 10;
 let foobar = 838383;");
+        // error test
+// let input = String::from("\
+// let x 5;
+// let = 10;
+// let 838383;");
+
         let l = Lexer::new(&input);
         let mut p = Parser::new(l);
         let program = p.parse_program();
