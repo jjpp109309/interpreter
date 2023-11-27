@@ -63,7 +63,7 @@ impl Parser {
             self.next_token();
         }
         
-        Some(ast::Statement { token, name })
+        Some(ast::Statement { token, name: Some(name), value: None })
     }
 
     fn expect_peek(&mut self, ttype: &TokenType) -> bool {
@@ -119,28 +119,18 @@ let foobar = 838383;");
 
         for (expected, statement) in ident_iter {
             let token_literal = statement.token_literal();
-            assert_eq!(
-                token_literal,
-                String::from("let"),
-                "Token literal not \"let\" got {}",
-                token_literal
-            );
+            assert_eq!(token_literal, String::from("let"), "Token literal not \"let\" got {}", token_literal);
 
-            let value = &statement.name.value;
-            assert_eq!(
-                value,
-                expected,
-                "Identifier value doesn't match. Got {}",
-                value
-            );
+            if let Some(name) = &statement.name {
+                let value = &name.value;
+                assert_eq!(value, expected, "Identifier value doesn't match. Got {}", value);
+            }
 
-            let ident_literal = &statement.name.token_literal();
-            assert_eq!(
-                ident_literal,
-                expected,
-                "Identifier literal doesn't match. Got {}",
-                ident_literal
-            )
+
+            if let Some(name) = &statement.name {
+                let ident_literal = &name.token_literal();
+                assert_eq!(ident_literal, expected, "Identifier literal doesn't match. Got {}", ident_literal)
+            }
         }
     }
 }
