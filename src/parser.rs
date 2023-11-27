@@ -133,4 +133,24 @@ let foobar = 838383;");
             }
         }
     }
+
+    #[test]
+    fn return_statemtne() {
+        let input = String::from("\
+return 5;
+return 10;
+return 3301;");
+
+        let l = Lexer::new(&input);
+        let mut p = Parser::new(l);
+        let program = p.parse_program();
+
+        let n = program.statements.len();
+        assert_eq!(n, 3, "Let statements must have 3 elements. Got {}", n);
+
+        for statement in program.statements {
+            let token_literal = statement.token_literal();
+            assert_eq!(token_literal, String::from("return"), "Token literal not \"let\" got {}", token_literal);
+        }
+    }
 }
