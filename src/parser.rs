@@ -37,6 +37,7 @@ impl Parser {
     fn parse_statement(&mut self) -> Option<ast::Statement> {
         match self.cur_token.ttype {
             TokenType::Let => self.parse_let_statement(),
+            TokenType::Return => self.parse_return_statement(),
             _ => None
         }
     }
@@ -79,6 +80,18 @@ impl Parser {
 
     fn parse_expression(&self) -> ast::Expression {
         todo!()
+    }
+
+    fn parse_return_statement(&mut self) -> Option<ast::Statement> {
+        let token = self.cur_token.clone();
+
+        self.next_token();
+
+        while self.cur_token.ttype != TokenType::SemiColon {
+            self.next_token();
+        }
+
+        Some(ast::Statement { token, name: None, value: None })
     }
 }
 
