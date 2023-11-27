@@ -60,6 +60,8 @@ impl Parser {
         
         self.next_token();
 
+        // TODO: parse expressions
+
         while self.cur_token.ttype != TokenType::SemiColon {
             self.next_token();
         }
@@ -86,6 +88,8 @@ impl Parser {
         let token = self.cur_token.clone();
 
         self.next_token();
+
+        // TODO: parse expressions
 
         while self.cur_token.ttype != TokenType::SemiColon {
             self.next_token();
