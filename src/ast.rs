@@ -1,3 +1,5 @@
+use crate::tokens;
+
 trait Node {
     fn token_literal(&self) -> String;
 }
@@ -7,7 +9,7 @@ trait Statement {
 }
 
 trait Expression {
-    fn statement_node(&self);
+    fn expression_node(&self);
 }
 
 struct Program {
@@ -24,4 +26,33 @@ impl Node for Program {
     }
 }
 
+struct LetStatement {
+    token: tokens::Token,
+    name: Identifier,
+    value: Identifier,
+}
 
+impl Node for LetStatement {
+    fn token_literal(&self) -> String {
+        self.token.literal.to_owned()
+    }
+}
+
+impl Statement for LetStatement {
+    fn statement_node(&self) {}
+}
+
+struct Identifier {
+    token: tokens::Token,
+    value: String,
+}
+
+impl Node for Identifier {
+    fn token_literal(&self) -> String {
+        self.token.literal.to_owned()
+    }
+}
+
+impl Statement for Identifier {
+    fn statement_node(&self) {}
+}
