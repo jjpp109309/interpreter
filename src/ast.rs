@@ -1,7 +1,8 @@
-use crate::tokens::Token;
+use crate::tokens::{Token, TokenType};
 
 pub trait Node {
     fn token_literal(&self) -> String;
+    fn string(&self) -> String;
 }
 
 pub trait StatementNode {
@@ -22,6 +23,34 @@ impl Node for Statement {
     fn token_literal(&self) -> String {
         self.token.literal.to_owned()
     }
+
+    fn string(&self) -> String {
+        match self.token.ttype {
+            TokenType::Let => {
+                let token = self.token_literal();
+                let name = if let Some(x) = &self.name {
+                    x.string() }
+                else { "".to_string() };
+                let equals = "=".to_string();
+                let value = if let Some(x) = &self.value {
+                    x.string() }
+                else { "".to_string() };
+
+                let scolon = ";".to_string();
+
+                vec![token, name, equals, value, scolon].join(" ")
+            },
+            TokenType::Return => {
+                let token = self.token_literal();
+                let value = if let Some(x) = &self.value {
+                    x.string()
+                } else { "".to_string() };
+
+                vec![token, value].join(" ")
+            },
+            _ => "".to_string(),
+        }
+    }
 }
 
 pub struct Expression {
@@ -32,9 +61,14 @@ impl Node for Expression {
     fn token_literal(&self) -> String {
         self.token.literal.to_owned()
     }
+
+    fn string(&self) -> String {
+        self.token_literal()
+    }
 }
 
 pub struct Program {
+    // pub statements: Vec<Statement>,
     pub statements: Vec<Statement>,
 }
 
@@ -46,6 +80,10 @@ impl Node for Program {
             String::from("")
         }
     }
+
+    fn string(&self) -> String {
+        self.statements.iter().map(|x| x.string()).collect()
+    }
 }
 
 pub struct Identifier {
@@ -56,6 +94,10 @@ pub struct Identifier {
 impl Node for Identifier {
     fn token_literal(&self) -> String {
         self.token.literal.to_owned()
+    }
+
+    fn string(&self) -> String {
+        self.value.to_owned()
     }
 }
 
