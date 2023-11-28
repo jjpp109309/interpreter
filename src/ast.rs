@@ -25,7 +25,8 @@ impl Node for Statement {
     }
 
     fn string(&self) -> String {
-        match self.token.ttype {
+        
+        let mut result = match self.token.ttype {
             TokenType::Let => {
                 let token = self.token_literal();
                 let name = if let Some(x) = &self.name {
@@ -36,9 +37,7 @@ impl Node for Statement {
                     x.string() }
                 else { "".to_string() };
 
-                let scolon = ";".to_string();
-
-                vec![token, name, equals, value, scolon].join(" ")
+                vec![token, name, equals, value].join(" ")
             },
             TokenType::Return => {
                 let token = self.token_literal();
@@ -48,8 +47,11 @@ impl Node for Statement {
 
                 vec![token, value].join(" ")
             },
-            _ => "".to_string(),
-        }
+            _ => { String::from("") }
+        };
+
+        result.push_str(";");
+        result
     }
 }
 
@@ -103,4 +105,37 @@ impl Node for Identifier {
 
 impl ExpressionNode for Identifier {
     fn expression_node(&self) {}
+}
+
+mod test {
+    use super::*;
+
+    #[test]
+    fn string() {
+        let program = Program {
+            statements: vec![
+                Statement {
+                    token: Token {
+                        ttype: TokenType::Let,
+                        literal: String::from("let"),
+                    },
+                    name: Some(Identifier {
+                        token: Token {
+                            ttype: TokenType::Ident,
+                            literal: String::from("myVar")
+                        },
+                        value: String::from("myVar")
+                    }),
+                    value: Some(Expression {
+                        token: Token {
+                            ttype: TokenType::Ident,
+                            literal: String::from("anotherVar")
+                        },
+                    })
+                }
+            ]
+        };
+
+        assert_eq!(program.string(), String::from("let myVar = anotherVar;"))
+    }
 }
