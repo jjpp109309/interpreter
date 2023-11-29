@@ -42,6 +42,7 @@ impl Parser {
             _ => ast::Statements::None,
         };
 
+        // TODO: https://stackoverflow.com/questions/9109872/how-do-you-access-enum-values-in-rust
         if let Some(s) = statement { Some(Box::new(s)) } else { None }
     }
 
