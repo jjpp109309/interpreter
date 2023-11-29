@@ -71,7 +71,19 @@ impl Parser {
         Some(ast::LetStatement { token, name })
     }
 
+    fn parse_return_statement(&mut self) -> Option<ast::ReturnStatement> {
+        let token = self.cur_token.clone();
 
+        self.next_token();
+
+        // TODO: parse expression
+
+        while self.cur_token.ttype != TokenType::SemiColon {
+            self.next_token();
+        };
+        
+        Some(ast::ReturnStatement { token })
+    }
 
     fn expect_peek(&mut self, ttype: &TokenType) -> bool {
         let peek_token = &self.peek_token.ttype;

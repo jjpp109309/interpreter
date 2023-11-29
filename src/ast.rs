@@ -69,3 +69,22 @@ impl Node for Identifier {
 impl Statement for Identifier {
     fn statement_node(&self) {}
 }
+
+pub struct ReturnStatement {
+    pub token: tokens::Token,
+    // pub value: Expression,
+}
+
+impl Node for ReturnStatement {
+    fn token_literal(&self) -> String {
+        self.token.literal.to_owned()
+    }
+
+    fn name_token_literal(&self) -> String {
+        panic!("Return statement does not have name attribute")
+    }
+}
+
+impl Statement for ReturnStatement {
+    fn statement_node(&self) {}
+}
