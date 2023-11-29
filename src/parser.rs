@@ -37,8 +37,9 @@ impl Parser {
 
     fn parse_statement(&mut self) -> Option<Box<dyn ast::Node>> {
         let statement = match self.cur_token.ttype {
-            TokenType::Let => self.parse_let_statement(),
-            _ => None
+            TokenType::Let => ast::Statements::Let(self.parse_let_statement()),
+            TokenType::Return => ast::Statements::Return(self.parse_return_statement()),
+            _ => ast::Statements::None,
         };
 
         if let Some(s) = statement { Some(Box::new(s)) } else { None }
@@ -118,7 +119,7 @@ let foobar = 838383;");
         let expected_identifiers = vec![
             String::from("x"),
             String::from("y"),
-            String::from("fooar"),
+            String::from("foobar"),
         ];
 
         let ident_iter = expected_identifiers
@@ -132,6 +133,26 @@ let foobar = 838383;");
             
             let name = &statement.name_token_literal();
             assert_eq!(expected, name, "Expected token {}, got {}", expected, name);
+        }
+    }
+
+    #[test]
+    fn return_statement() {
+        let input = String::from("\
+return 5;
+return 10;
+return 3301;");
+
+        let l = Lexer::new(&input);
+        let p = Parser::new(l);
+        let program = p.parse_program();
+
+        let n = program.statements.len();
+        assert_eq!(n, 3, "Return statements must have 3 elements. Got {}", n);
+
+        for statement in program.statements {
+            let token_literal = statement.token_literal();
+            assert_eq!(token_literal, String::from("return"), "Token literal not \"let\" got {}", token_literal);
         }
     }
 }

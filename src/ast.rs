@@ -13,6 +13,12 @@ trait Expression {
     fn expression_node(&self);
 }
 
+pub enum Statements {
+    Let(Option<LetStatement>),
+    Return(Option<ReturnStatement>),
+    None,
+}
+
 pub struct Program {
     pub statements: Vec<Box<dyn Node>>,
 }
