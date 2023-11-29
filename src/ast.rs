@@ -1,7 +1,8 @@
 use crate::tokens;
 
-trait Node {
+pub trait Node {
     fn token_literal(&self) -> String;
+    fn name_token_literal(&self) -> String;
 }
 
 trait Statement {
@@ -12,8 +13,8 @@ trait Expression {
     fn expression_node(&self);
 }
 
-struct Program {
-    statements: Vec<Box<dyn Node>>,
+pub struct Program {
+    pub statements: Vec<Box<dyn Node>>,
 }
 
 impl Node for Program {
@@ -24,17 +25,25 @@ impl Node for Program {
             String::from("")
         }
     }
+
+    fn name_token_literal(&self) -> String {
+        String::from("")
+    }
 }
 
-struct LetStatement {
-    token: tokens::Token,
-    name: Identifier,
-    value: Identifier,
+pub struct LetStatement {
+    pub token: tokens::Token,
+    pub name: Identifier,
+    // pub value: Identifier,
 }
 
 impl Node for LetStatement {
     fn token_literal(&self) -> String {
         self.token.literal.to_owned()
+    }
+
+    fn name_token_literal(&self) -> String {
+        self.name.token.literal.to_owned()
     }
 }
 
@@ -42,14 +51,18 @@ impl Statement for LetStatement {
     fn statement_node(&self) {}
 }
 
-struct Identifier {
-    token: tokens::Token,
-    value: String,
+pub struct Identifier {
+    pub token: tokens::Token,
+    pub value: String,
 }
 
 impl Node for Identifier {
     fn token_literal(&self) -> String {
         self.token.literal.to_owned()
+    }
+
+    fn name_token_literal(&self) -> String {
+        panic!("Identifier does not have name attribute")
     }
 }
 
