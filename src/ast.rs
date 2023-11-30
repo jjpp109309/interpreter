@@ -2,6 +2,7 @@ use crate::tokens;
 
 pub trait Node {
     fn token_literal(&self) -> String;
+    fn string(&self) -> String;
 }
 
 pub enum Statement {
@@ -17,6 +18,10 @@ impl Node for Statement {
             Statement::Return(stmt) => stmt.token.literal.to_owned(),
             Statement::Expression(stmt) => stmt.token.literal.to_owned(),
         }
+    }
+
+    fn string(&self) -> String {
+        String::from("")
     }
 }
 
@@ -41,6 +46,15 @@ impl Node for Program {
         } else {
             String::from("")
         }
+    }
+
+    fn string(&self) -> String {
+        self
+            .statements
+            .iter()
+            .map(|s| s.string())
+            .collect::<Vec<String>>()
+            .join("\n")
     }
 }
 
