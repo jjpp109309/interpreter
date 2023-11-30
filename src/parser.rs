@@ -22,35 +22,31 @@ impl Parser {
     }
 
     fn parse_program(mut self) -> ast::Program {
-        let mut statements: Vec<Box<dyn ast::Node>> = vec![];
+        let mut statements: Vec<ast::Statement> = vec![];
 
         while self.cur_token.ttype != TokenType::Eof {
             let statement = self.parse_statement();
             
-            if let Some(s) = statement { statements.push(s) };
-
+            statements.push(statement);
             self.next_token();
         }
 
         ast::Program { statements }
     }
 
-    fn parse_statement(&mut self) -> Option<Box<dyn ast::Node>> {
-        let statement = match self.cur_token.ttype {
-            TokenType::Let => ast::Statements::Let(self.parse_let_statement()),
-            TokenType::Return => ast::Statements::Return(self.parse_return_statement()),
-            _ => ast::Statements::None,
-        };
-
-        // TODO: https://stackoverflow.com/questions/9109872/how-do-you-access-enum-values-in-rust
-        if let Some(s) = statement { Some(Box::new(s)) } else { None }
+    fn parse_statement(&mut self) -> ast::Statement {
+        match self.cur_token.ttype {
+            TokenType::Let => self.parse_let_statement(),
+            TokenType::Return => self.parse_return_statement(),
+            _ => panic!("token not implemented")
+        }
     }
 
-    fn parse_let_statement(&mut self) -> Option<ast::LetStatement> {
+    fn parse_let_statement(&mut self) -> ast::Statement {
         let token = self.cur_token.clone();
 
         if !self.expect_peek(&TokenType::Ident) {
-            return None
+            panic!("Next token not Ident");
         };
 
         let name = ast::Identifier {
@@ -59,10 +55,8 @@ impl Parser {
         };
 
         if !self.expect_peek(&TokenType::Assign) {
-            return None
-        }
-
-        self.next_token();
+            panic!("Next token not Assign");
+        };
 
         // TODO: parse expression
 
@@ -70,10 +64,10 @@ impl Parser {
             self.next_token();
         };
         
-        Some(ast::LetStatement { token, name })
+        ast::Statement::Let(ast::LetStatement { token, name } )
     }
 
-    fn parse_return_statement(&mut self) -> Option<ast::ReturnStatement> {
+    fn parse_return_statement(&mut self) -> ast::Statement {
         let token = self.cur_token.clone();
 
         self.next_token();
@@ -83,8 +77,8 @@ impl Parser {
         while self.cur_token.ttype != TokenType::SemiColon {
             self.next_token();
         };
-        
-        Some(ast::ReturnStatement { token })
+
+        ast::Statement::Return(ast::ReturnStatement { token } )
     }
 
     fn expect_peek(&mut self, ttype: &TokenType) -> bool {
@@ -101,6 +95,7 @@ impl Parser {
 
 #[cfg(test)]
 mod test {
+    use crate::ast::Node;
     use super::*;
 
     #[test]

@@ -2,25 +2,37 @@ use crate::tokens;
 
 pub trait Node {
     fn token_literal(&self) -> String;
-    fn name_token_literal(&self) -> String;
-}
-
-trait Statement {
-    fn statement_node(&self);
 }
 
 trait Expression {
     fn expression_node(&self);
 }
 
-pub enum Statements {
-    Let(Option<LetStatement>),
-    Return(Option<ReturnStatement>),
-    None,
+pub enum Statement {
+    Let(LetStatement),
+    Return(ReturnStatement),
+}
+
+impl Node for Statement {
+    fn token_literal(&self) -> String {
+        match self {
+            Statement::Let(stmt) => stmt.token.literal.to_owned(),
+            Statement::Return(stmt) => stmt.token.literal.to_owned(),
+        }
+    }
+}
+
+impl Statement {
+    pub fn name_token_literal(&self) -> String {
+        match self {
+            Statement::Let(stmt) => stmt.name.token.literal.to_owned(),
+            Statement::Return(_) => panic!("Return statement does not have name field"),
+        }
+    }
 }
 
 pub struct Program {
-    pub statements: Vec<Box<dyn Node>>,
+    pub statements: Vec<Statement>,
 }
 
 impl Node for Program {
@@ -31,10 +43,6 @@ impl Node for Program {
             String::from("")
         }
     }
-
-    fn name_token_literal(&self) -> String {
-        String::from("")
-    }
 }
 
 pub struct LetStatement {
@@ -43,54 +51,12 @@ pub struct LetStatement {
     // pub value: Identifier,
 }
 
-impl Node for LetStatement {
-    fn token_literal(&self) -> String {
-        self.token.literal.to_owned()
-    }
-
-    fn name_token_literal(&self) -> String {
-        self.name.token.literal.to_owned()
-    }
-}
-
-impl Statement for LetStatement {
-    fn statement_node(&self) {}
-}
-
 pub struct Identifier {
     pub token: tokens::Token,
     pub value: String,
 }
 
-impl Node for Identifier {
-    fn token_literal(&self) -> String {
-        self.token.literal.to_owned()
-    }
-
-    fn name_token_literal(&self) -> String {
-        panic!("Identifier does not have name attribute")
-    }
-}
-
-impl Statement for Identifier {
-    fn statement_node(&self) {}
-}
-
 pub struct ReturnStatement {
     pub token: tokens::Token,
     // pub value: Expression,
-}
-
-impl Node for ReturnStatement {
-    fn token_literal(&self) -> String {
-        self.token.literal.to_owned()
-    }
-
-    fn name_token_literal(&self) -> String {
-        panic!("Return statement does not have name attribute")
-    }
-}
-
-impl Statement for ReturnStatement {
-    fn statement_node(&self) {}
 }
