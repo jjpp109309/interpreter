@@ -123,3 +123,34 @@ impl ExpressionStatement {
 
 pub struct Expression {
 }
+
+#[cfg(test)]
+mod test{
+    use super::*;
+
+    #[test]
+    fn string() {
+        let program = Program {
+            statements: vec![
+                Statement::Let(LetStatement {
+                    token: tokens::Token {
+                        ttype: tokens::TokenType::Let,
+                        literal: String::from("let"),
+                    },
+                    name: Identifier {
+                        token: tokens::Token {
+                            ttype: tokens::TokenType::Ident,
+                            literal: String::from("myVar")
+                        },
+                        value: String::from("myVar")
+                    }
+                })
+            ]
+        };
+
+        let expected = String::from("let myVar = ;");
+        let string = program.string();
+
+        assert_eq!(expected, string, "Wrong program. expected {} got {}", string, expected)
+    }
+}
