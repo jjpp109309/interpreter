@@ -21,7 +21,11 @@ impl Node for Statement {
     }
 
     fn string(&self) -> String {
-        String::from("")
+        match self {
+            Statement::Let(stmt) => stmt.string(),
+            Statement::Return(stmt) => stmt.string(),
+            Statement::Expression(stmt) => stmt.string(),
+        }
     }
 }
 
@@ -64,6 +68,21 @@ pub struct LetStatement {
     // pub value: Identifier,
 }
 
+impl LetStatement {
+    fn string(&self) -> String {
+        let mut buffer = String::new();
+
+        buffer.push_str(&self.token.literal);
+        buffer.push_str(" ");
+        buffer.push_str(&self.name.token.literal);
+        buffer.push_str(" = ");
+        // TODO: expression value string
+        buffer.push_str(";");
+
+        buffer
+    }
+}
+
 pub struct Identifier {
     pub token: tokens::Token,
     pub value: String,
@@ -74,11 +93,33 @@ pub struct ReturnStatement {
     // pub value: Expression,
 }
 
+impl ReturnStatement {
+    fn string(&self) -> String {
+        let mut buffer = String::new();
+
+        buffer.push_str(&self.token.literal);
+        buffer.push_str(" ");
+        // TODO: expression value string
+        buffer.push_str(";");
+
+        buffer
+    }
+}
+
 pub struct ExpressionStatement {
     pub token: tokens::Token,
     pub expression: Expression,
 }
 
-pub struct Expression {
+impl ExpressionStatement {
+    fn string(&self) -> String {
+        let mut buffer = String::new();
 
+        buffer.push_str("");
+
+        buffer
+    }
+}
+
+pub struct Expression {
 }
