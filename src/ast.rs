@@ -4,10 +4,6 @@ pub trait Node {
     fn token_literal(&self) -> String;
 }
 
-trait Expression {
-    fn expression_node(&self);
-}
-
 pub enum Statement {
     Let(LetStatement),
     Return(ReturnStatement),
@@ -19,7 +15,7 @@ impl Node for Statement {
         match self {
             Statement::Let(stmt) => stmt.token.literal.to_owned(),
             Statement::Return(stmt) => stmt.token.literal.to_owned(),
-            Statement::Expression(_) => todo!()
+            Statement::Expression(stmt) => stmt.token.literal.to_owned(),
         }
     }
 }
@@ -29,7 +25,7 @@ impl Statement {
         match self {
             Statement::Let(stmt) => stmt.name.token.literal.to_owned(),
             Statement::Return(_) => panic!("Return statement does not have name field"),
-            Statement::Expression(_) => todo!()
+            Statement::Expression(_) => panic!("Return statement does not have name field")
         }
     }
 }
@@ -64,4 +60,11 @@ pub struct ReturnStatement {
     // pub value: Expression,
 }
 
-pub struct ExpressionStatement {}
+pub struct ExpressionStatement {
+    pub token: tokens::Token,
+    pub expression: Expression,
+}
+
+pub struct Expression {
+
+}
