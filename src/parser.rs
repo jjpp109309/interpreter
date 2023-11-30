@@ -38,7 +38,7 @@ impl Parser {
         match self.cur_token.ttype {
             TokenType::Let => self.parse_let_statement(),
             TokenType::Return => self.parse_return_statement(),
-            _ => panic!("token not implemented")
+            _ => self.parse_expression_statement(),
         }
     }
 
@@ -80,6 +80,8 @@ impl Parser {
 
         ast::Statement::Return(ast::ReturnStatement { token } )
     }
+
+    fn parse_expression_statement(&mut self) -> ast::Statement {todo!()}
 
     fn expect_peek(&mut self, ttype: &TokenType) -> bool {
         let peek_token = &self.peek_token.ttype;
