@@ -1,11 +1,22 @@
 use crate::tokens::{Token, TokenType};
 use crate::lexer::Lexer;
 use crate::ast;
+use std::collections::HashMap;
+
+type InfixFn = fn() -> ast::Expression;
+type PrefixFn = fn(ast::Expression) -> ast::Expression;
+
+enum ParseFn {
+    Infix(InfixFn),
+    Prefix(PrefixFn),
+}
 
 struct Parser {
     lexer: Lexer,
     cur_token: Token,
     peek_token: Token,
+    prefix_parse_fns: HashMap<String, PrefixFn>,
+    infix_parse_fns: HashMap<String, InfixFn>,
 }
 
 impl Parser {
@@ -13,7 +24,10 @@ impl Parser {
         let cur_token = l.next_token();
         let peek_token = l.next_token();
 
-        Parser { lexer: l, cur_token, peek_token }
+        let prefix_parse_fns = HashMap::new();
+        let infix_parse_fns = HashMap::new();
+
+        Parser { lexer: l, cur_token, peek_token, prefix_parse_fns, infix_parse_fns }
     } 
 
     fn next_token(&mut self) {
@@ -92,6 +106,17 @@ impl Parser {
         } else {
             panic!("Expected token type to be {:?}, got {:?}", ttype, peek_token);
         }
+    }
+
+    fn register_parse_fn(&mut self, token_type: &String, func: ParseFn) {
+        match func {
+            ParseFn::Infix(f) => {
+                self.infix_parse_fns.insert(token_type.to_string(), f);
+            },
+            ParseFn::Prefix(f) => {
+                self.prefix_parse_fns.insert(token_type.to_string(), f);
+            },
+        };
     }
 }
 
