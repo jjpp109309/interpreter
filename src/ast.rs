@@ -88,6 +88,12 @@ pub struct Identifier {
     pub value: String,
 }
 
+impl Identifier {
+    fn string(&self) -> String {
+        self.value.to_string()
+    }
+}
+
 pub struct ReturnStatement {
     pub token: tokens::Token,
     // pub value: Expression,
@@ -115,13 +121,19 @@ impl ExpressionStatement {
     fn string(&self) -> String {
         let mut buffer = String::new();
 
-        buffer.push_str("");
+        buffer.push_str(&self.expression.string());
 
         buffer
     }
 }
 
 pub struct Expression {
+}
+
+impl Expression {
+    fn string(&self) -> String {
+        todo!()
+    }
 }
 
 #[cfg(test)]
