@@ -5,6 +5,7 @@ pub trait Node {
     fn string(&self) -> String;
 }
 
+#[derive(Debug)]
 pub enum Statement {
     Let(LetStatement),
     Return(ReturnStatement),
@@ -62,6 +63,7 @@ impl Node for Program {
     }
 }
 
+#[derive(Debug)]
 pub struct LetStatement {
     pub token: tokens::Token,
     pub name: Identifier,
@@ -83,6 +85,7 @@ impl LetStatement {
     }
 }
 
+#[derive(Debug)]
 pub struct Identifier {
     pub token: tokens::Token,
     pub value: String,
@@ -94,6 +97,7 @@ impl Identifier {
     }
 }
 
+#[derive(Debug)]
 pub struct ReturnStatement {
     pub token: tokens::Token,
     // pub value: Expression,
@@ -112,6 +116,7 @@ impl ReturnStatement {
     }
 }
 
+#[derive(Debug)]
 pub struct ExpressionStatement {
     pub token: tokens::Token,
     pub expression: Expression,
@@ -127,7 +132,9 @@ impl ExpressionStatement {
     }
 }
 
-pub struct Expression {
+#[derive(Debug)]
+pub enum Expression {
+    Identifier(Identifier)
 }
 
 impl Expression {

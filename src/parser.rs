@@ -178,4 +178,33 @@ return 3301;");
             assert_eq!(token_literal, String::from("return"), "Token literal not \"let\" got {}", token_literal);
         }
     }
+
+    #[test]
+    fn identifier_statement() {
+        let input = String::from("\
+foobar;");
+
+        let l = Lexer::new(&input);
+        let p = Parser::new(l);
+        let program = p.parse_program();
+
+        let n = program.statements.len();
+        assert_eq!(n, 1, "Program has not enough statements. Got {}", n);
+
+        let statement = &program.statements[0];
+
+        match statement {
+            ast::Statement::Expression(s) => {
+                match &s.expression {
+                    ast::Expression::Identifier(i) => {
+                        if i.value != String::from("foobar") {
+                            panic!("Identifier value not correct. Got {:?}", i)
+                        }
+                    },
+                    _ => panic!("Expression not identifier")
+                }
+            },
+            s => panic!("Statement not expression. Got {:?}", s),
+        };
+    }
 }
