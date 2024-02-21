@@ -3,8 +3,8 @@ use crate::lexer::Lexer;
 use crate::ast;
 use std::collections::HashMap;
 
-type InfixFn = fn() -> ast::Expression;
-type PrefixFn = fn(ast::Expression) -> ast::Expression;
+type PrefixFn = fn() -> ast::Expression;
+type InfixFn = fn(ast::Expression) -> ast::Expression;
 
 enum ParseFn {
     Infix(InfixFn),
