@@ -1,5 +1,5 @@
 use std::io::{stdin, stdout, Write};
-use crate::tokens::TokenType;
+use crate::tokens::Token;
 use crate::lexer::Lexer;
 
 pub fn start() {
@@ -21,8 +21,8 @@ pub fn start() {
         let mut l = Lexer::new(&input);
         loop {
             let tok = l.next_token();
-            match tok.ttype {
-                TokenType::Eof => break,
+            match tok {
+                Token::Eof => break,
                 _ => println!("{:?}", tok)
             }
         }
