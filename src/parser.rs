@@ -3,20 +3,20 @@ use crate::lexer::Lexer;
 use crate::ast;
 use std::collections::HashMap;
 
-// type PrefixFn = fn() -> ast::Expression;
-// type InfixFn = fn(ast::Expression) -> ast::Expression;
+type PrefixFn = fn() -> ast::Expression;
+type InfixFn = fn(ast::Expression) -> ast::Expression;
 
-// enum ParseFn {
-//     Infix(InfixFn),
-//     Prefix(PrefixFn),
-// }
+enum ParseFn {
+    Infix(InfixFn),
+    Prefix(PrefixFn),
+}
 
 struct Parser {
     lexer: Lexer,
     cur_token: Token,
     peek_token: Token,
-    // prefix_parse_fns: HashMap<String, PrefixFn>,
-    // infix_parse_fns: HashMap<String, InfixFn>,
+    prefix_parse_fns: HashMap<String, PrefixFn>,
+    infix_parse_fns: HashMap<String, InfixFn>,
 }
 
 impl Parser {
@@ -24,11 +24,10 @@ impl Parser {
         let cur_token = l.next_token();
         let peek_token = l.next_token();
 
-        // let prefix_parse_fns = HashMap::new();
-        // let infix_parse_fns = HashMap::new();
+        let prefix_parse_fns = HashMap::new();
+        let infix_parse_fns = HashMap::new();
 
-        Parser { lexer: l, cur_token, peek_token }
-        // Parser { lexer: l, cur_token, peek_token, prefix_parse_fns, infix_parse_fns }
+        Parser { lexer: l, cur_token, peek_token, prefix_parse_fns, infix_parse_fns }
     } 
 
     fn next_token(&mut self) {
@@ -103,17 +102,16 @@ impl Parser {
 
     fn parse_expression_statement(&mut self) -> ast::Statement {todo!()}
 
-    //
-    // fn register_parse_fn(&mut self, token_type: &String, func: ParseFn) {
-    //     match func {
-    //         ParseFn::Infix(f) => {
-    //             self.infix_parse_fns.insert(token_type.to_string(), f);
-    //         },
-    //         ParseFn::Prefix(f) => {
-    //             self.prefix_parse_fns.insert(token_type.to_string(), f);
-    //         },
-    //     };
-    // }
+    fn register_parse_fn(&mut self, token_type: &String, func: ParseFn) {
+        match func {
+            ParseFn::Infix(f) => {
+                self.infix_parse_fns.insert(token_type.to_string(), f);
+            },
+            ParseFn::Prefix(f) => {
+                self.prefix_parse_fns.insert(token_type.to_string(), f);
+            },
+        };
+    }
 }
 
 #[cfg(test)]
@@ -190,10 +188,10 @@ return 3301;");
 //         let statement = &program.statements[0];
 //
 //         match statement {
-//             ast::Statement::Expression(s) => {
-//                 match &s.expression {
-//                     ast::Expression::Identifier(i) => {
-//                         if i.value != String::from("foobar") {
+//             ast::Statement::Expression { expression, .. } => {
+//                 match expression {
+//                     Token::Ident(i) => {
+//                         if i != &String::from("foobar") {
 //                             panic!("Identifier value not correct. Got {:?}", i)
 //                         }
 //                     },
