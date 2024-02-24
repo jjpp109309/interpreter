@@ -8,7 +8,7 @@ pub trait Node {
 #[derive(Debug)]
 pub enum Statement {
     Let { token: Token, identifier: Token },
-    // Return(ReturnStatement),
+    Return {token: Token },
     // Expression(ExpressionStatement),
 }
 
@@ -16,7 +16,7 @@ impl Node for Statement {
     fn token_literal(&self) -> String {
         match self {
             Statement::Let { token, .. } => token.string(),
-            // Statement::Return(stmt) => stmt.token.literal.to_owned(),
+            Statement::Return { token } => token.string(),
             // Statement::Expression(stmt) => stmt.token.literal.to_owned(),
         }
     }
@@ -33,10 +33,16 @@ impl Node for Statement {
                 buffer.push_str(" = ");
                 // TODO: expression value string
                 buffer.push_str(";");
-
-                buffer
             },
+            Statement::Return { token } => {
+                buffer.push_str(&token.string());
+                buffer.push_str(" ");
+                // TODO: expression value string
+                buffer.push_str(";");
+            }
         }
+
+        buffer
     }
 }
 
@@ -44,7 +50,7 @@ impl Statement {
     pub fn name_token_literal(&self) -> String {
         match self {
             Statement::Let { token, .. } => token.string(),
-            // Statement::Return(_) => panic!("Return statement does not have name field"),
+            Statement::Return { .. } => panic!("Return statement does not have identifier"),
             // Statement::Expression(_) => panic!("Return statement does not have name field")
         }
     }
@@ -73,25 +79,6 @@ impl Node for Program {
     }
 }
 
-// #[derive(Debug)]
-// pub struct ReturnStatement {
-//     pub token: tokens::Token,
-//     // pub value: Expression,
-// }
-//
-// impl ReturnStatement {
-//     fn string(&self) -> String {
-//         let mut buffer = String::new();
-//
-//         buffer.push_str(&self.token.literal);
-//         buffer.push_str(" ");
-//         // TODO: expression value string
-//         buffer.push_str(";");
-//
-//         buffer
-//     }
-// }
-//
 // #[derive(Debug)]
 // pub struct ExpressionStatement {
 //     pub token: tokens::Token,
