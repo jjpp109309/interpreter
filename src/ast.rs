@@ -49,7 +49,7 @@ impl Node for Statement {
 impl Statement {
     pub fn name_token_literal(&self) -> String {
         match self {
-            Statement::Let { token, .. } => token.string(),
+            Statement::Let { identifier, .. } => identifier.string(),
             Statement::Return { .. } => panic!("Return statement does not have identifier"),
             // Statement::Expression(_) => panic!("Return statement does not have name field")
         }
