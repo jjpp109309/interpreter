@@ -1,4 +1,4 @@
-use crate::tokens::{Token, TokenType};
+use crate::tokens::Token;
 
 #[derive(Debug)]
 pub struct Lexer {
@@ -45,48 +45,42 @@ impl Lexer {
             "=" => {
                 if Self::next_char_is_eq(&self) {
                     self.read_char();
-                    let literal = String::from("==");
-                    Self::new_token(TokenType::Eq, &literal)
+                    Token::Eq("==".to_string())
                 } else {
-                    Self::new_token(TokenType::Assign, &self.ch)
+                    Token::Assign("=".to_string())
                 }
             },
-            ";" => Self::new_token(TokenType::SemiColon, &self.ch),
-            "(" => Self::new_token(TokenType::LParen, &self.ch),
-            ")" => Self::new_token(TokenType::RParen, &self.ch),
-            "," => Self::new_token(TokenType::Comma, &self.ch),
-            "+" => Self::new_token(TokenType::Plus, &self.ch),
-            "-" => Self::new_token(TokenType::Minus, &self.ch),
-            "*" => Self::new_token(TokenType::Asterisk, &self.ch),
+            ";" => Token::SemiColon(";".to_string()),
+            "(" => Token::LParen("(".to_string()),
+            ")" => Token::RParen(")".to_string()),
+            "," => Token::Comma(",".to_string()),
+            "+" => Token::Plus("+".to_string()),
+            "-" => Token::Minus("-".to_string()),
+            "*" => Token::Asterisk("*".to_string()),
             "!" => {
                 if Self::next_char_is_eq(&self) {
                     self.read_char();
-                    let literal = String::from("!=");
-                    Self::new_token(TokenType::NotEq, &literal)
+                    Token::NotEq("!=".to_string())
                 } else {
-                    Self::new_token(TokenType::Bang, &self.ch)
+                    Token::Bang("!".to_string())
                 }
             }
-            "/" => Self::new_token(TokenType::Slash, &self.ch),
-            "<" => Self::new_token(TokenType::Lt, &self.ch),
-            ">" => Self::new_token(TokenType::Gt, &self.ch),
-            "{" => Self::new_token(TokenType::LBrace, &self.ch),
-            "}" => Self::new_token(TokenType::RBrace, &self.ch),
-            "" => Self::new_token(TokenType::Eof, &self.ch),
+            "/" => Token::Slash("/".to_string()),
+            "<" => Token::Lt("<".to_string()),
+            ">" => Token::Gt(">".to_string()),
+            "{" => Token::LBrace("{".to_string()),
+            "}" => Token::RBrace("}".to_string()),
+            "" => Token::Eof,
             _ => {
                 if Self::is_letter(&self.ch) {
                     let literal = self.read_identifier();
-                    let token_type = TokenType::lookup_ident(&literal);
+                    Token::lookup_ident(&literal)
 
-                    Self::new_token(token_type, &literal)
                 } else if Self::is_digit(&self.ch) {
                     let literal = self.read_number();
-                    let token_type = TokenType::Int;
-
-                    Self::new_token(token_type, &literal)
-
+                    Token::Int(literal)
                 } else {
-                    Self::new_token(TokenType::Illegal, &self.ch)
+                    Token::Illegal(self.ch.to_string())
                 }
             }
         };
@@ -99,10 +93,6 @@ impl Lexer {
         while " " == self.ch  || "\t" == self.ch || "\n" == self.ch || "\r" == self.ch {
             self.read_char()
         }
-    }
-
-    pub fn new_token(ttype: TokenType, literal: &String) -> Token {
-        Token { ttype, literal: literal.to_owned() }
     }
 
     pub fn is_letter(letter: &String) -> bool {
@@ -150,16 +140,16 @@ mod test {
     fn next_token() {
         let input = String::from("=+(){}!,;");
         let tokens = vec![
-            Token { ttype: TokenType::Assign, literal: "=".to_string() },
-            Token { ttype: TokenType::Plus, literal: "+".to_string() },
-            Token { ttype: TokenType::LParen, literal: "(".to_string() },
-            Token { ttype: TokenType::RParen, literal: ")".to_string() },
-            Token { ttype: TokenType::LBrace, literal: "{".to_string() },
-            Token { ttype: TokenType::RBrace, literal: "}".to_string() },
-            Token { ttype: TokenType::Bang, literal: "!".to_string() },
-            Token { ttype: TokenType::Comma, literal: ",".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::Eof, literal: "".to_string() },
+            Token::Assign("=".to_string()),
+            Token::Plus("+".to_string()),
+            Token::LParen("(".to_string()),
+            Token::RParen(")".to_string()),
+            Token::LBrace("{".to_string()),
+            Token::RBrace("}".to_string()),
+            Token::Bang("!".to_string()),
+            Token::Comma(",".to_string()),
+            Token::SemiColon(";".to_string()),
+            Token::Eof,
         ];
 
         let mut l = Lexer::new(&input);
@@ -182,43 +172,43 @@ let add = fn(x, y) {
 let result = add(five, ten);");
 
         let tokens = vec![
-            Token { ttype: TokenType::Let, literal: "let".to_string() },
-            Token { ttype: TokenType::Ident, literal: "five".to_string() },
-            Token { ttype: TokenType::Assign, literal: "=".to_string() },
-            Token { ttype: TokenType::Int, literal: "5".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::Let, literal: "let".to_string() },
-            Token { ttype: TokenType::Ident, literal: "ten".to_string() },
-            Token { ttype: TokenType::Assign, literal: "=".to_string() },
-            Token { ttype: TokenType::Int, literal: "10".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::Let, literal: "let".to_string() },
-            Token { ttype: TokenType::Ident, literal: "add".to_string() },
-            Token { ttype: TokenType::Assign, literal: "=".to_string() },
-            Token { ttype: TokenType::Function, literal: "fn".to_string() },
-            Token { ttype: TokenType::LParen, literal: "(".to_string() },
-            Token { ttype: TokenType::Ident, literal: "x".to_string() },
-            Token { ttype: TokenType::Comma, literal: ",".to_string() },
-            Token { ttype: TokenType::Ident, literal: "y".to_string() },
-            Token { ttype: TokenType::RParen, literal: ")".to_string() },
-            Token { ttype: TokenType::LBrace, literal: "{".to_string() },
-            Token { ttype: TokenType::Ident, literal: "x".to_string()},
-            Token { ttype: TokenType::Plus, literal: "+".to_string() },
-            Token { ttype: TokenType::Ident, literal: "y".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::RBrace, literal: "}".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::Let, literal: "let".to_string() },
-            Token { ttype: TokenType::Ident, literal: "result".to_string() },
-            Token { ttype: TokenType::Assign, literal: "=".to_string() },
-            Token { ttype: TokenType::Ident, literal: "add".to_string() },
-            Token { ttype: TokenType::LParen, literal: "(".to_string() },
-            Token { ttype: TokenType::Ident, literal: "five".to_string() },
-            Token { ttype: TokenType::Comma, literal: ",".to_string() },
-            Token { ttype: TokenType::Ident, literal: "ten".to_string() },
-            Token { ttype: TokenType::RParen, literal: ")".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::Eof, literal: "".to_string() }, 
+            Token::Let("let".to_string()),
+            Token::Ident(String::from("five")),
+            Token::Assign("=".to_string()),
+            Token::Int(String::from("5")),
+            Token::SemiColon(";".to_string()),
+            Token::Let("let".to_string()),
+            Token::Ident(String::from("ten")),
+            Token::Assign("=".to_string()),
+            Token::Int(String::from("10")),
+            Token::SemiColon(";".to_string()),
+            Token::Let("let".to_string()),
+            Token::Ident(String::from("add")),
+            Token::Assign("=".to_string()),
+            Token::Function("fn".to_string()),
+            Token::LParen("(".to_string()),
+            Token::Ident(String::from("x")),
+            Token::Comma(",".to_string()),
+            Token::Ident(String::from("y")),
+            Token::RParen(")".to_string()),
+            Token::LBrace("{".to_string()),
+            Token::Ident(String::from("x")),
+            Token::Plus("+".to_string()),
+            Token::Ident(String::from("y")),
+            Token::SemiColon(";".to_string()),
+            Token::RBrace("}".to_string()),
+            Token::SemiColon(";".to_string()),
+            Token::Let("let".to_string()),
+            Token::Ident(String::from("result")),
+            Token::Assign("=".to_string()),
+            Token::Ident(String::from("add")),
+            Token::LParen("(".to_string()),
+            Token::Ident(String::from("five")),
+            Token::Comma(",".to_string()),
+            Token::Ident(String::from("ten")),
+            Token::RParen(")".to_string()),
+            Token::SemiColon(";".to_string()),
+            Token::Eof, 
         ];
 
         let mut l = Lexer::new(&input);
@@ -237,19 +227,19 @@ let result = add(five, ten);");
 5 < 10 > 5;");
 
         let tokens = vec![
-            Token { ttype: TokenType::Bang, literal: "!".to_string() },
-            Token { ttype: TokenType::Minus, literal: "-".to_string() },
-            Token { ttype: TokenType::Slash, literal: "/".to_string() },
-            Token { ttype: TokenType::Asterisk, literal: "*".to_string() },
-            Token { ttype: TokenType::Int, literal: "5".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::Int, literal: "5".to_string() },
-            Token { ttype: TokenType::Lt, literal: "<".to_string() },
-            Token { ttype: TokenType::Int, literal: "10".to_string() },
-            Token { ttype: TokenType::Gt, literal: ">".to_string() },
-            Token { ttype: TokenType::Int, literal: "5".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::Eof, literal: "".to_string() }, 
+            Token::Bang("!".to_string()),
+            Token::Minus("-".to_string()),
+            Token::Slash("/".to_string()),
+            Token::Asterisk("*".to_string()),
+            Token::Int(String::from("5")),
+            Token::SemiColon(";".to_string()),
+            Token::Int(String::from("5")),
+            Token::Lt("<".to_string()),
+            Token::Int(String::from("10")),
+            Token::Gt(">".to_string()),
+            Token::Int(String::from("5")),
+            Token::SemiColon(";".to_string()),
+            Token::Eof, 
         ];
 
         let mut l = Lexer::new(&input);
@@ -271,24 +261,24 @@ if (5 < 10) {
 }");
 
         let tokens = vec![
-            Token { ttype: TokenType::If, literal: "if".to_string() },
-            Token { ttype: TokenType::LParen, literal: "(".to_string() },
-            Token { ttype: TokenType::Int, literal: "5".to_string() },
-            Token { ttype: TokenType::Lt, literal: "<".to_string() },
-            Token { ttype: TokenType::Int, literal: "10".to_string() },
-            Token { ttype: TokenType::RParen, literal: ")".to_string() },
-            Token { ttype: TokenType::LBrace, literal: "{".to_string() },
-            Token { ttype: TokenType::Return, literal: "return".to_string() },
-            Token { ttype: TokenType::True, literal: "true".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::RBrace, literal: "}".to_string() },
-            Token { ttype: TokenType::Else, literal: "else".to_string() },
-            Token { ttype: TokenType::LBrace, literal: "{".to_string() },
-            Token { ttype: TokenType::Return, literal: "return".to_string() },
-            Token { ttype: TokenType::False, literal: "false".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::RBrace, literal: "}".to_string() },
-            Token { ttype: TokenType::Eof, literal: "".to_string() }, 
+            Token::If("if".to_string()),
+            Token::LParen("(".to_string()),
+            Token::Int(String::from("5")),
+            Token::Lt("<".to_string()),
+            Token::Int(String::from("10")),
+            Token::RParen(")".to_string()),
+            Token::LBrace("{".to_string()),
+            Token::Return("return".to_string()),
+            Token::True("true".to_string()),
+            Token::SemiColon(";".to_string()),
+            Token::RBrace("}".to_string()),
+            Token::Else("else".to_string()),
+            Token::LBrace("{".to_string()),
+            Token::Return("return".to_string()),
+            Token::False("false".to_string()),
+            Token::SemiColon(";".to_string()),
+            Token::RBrace("}".to_string()),
+            Token::Eof, 
         ];
 
         let mut l = Lexer::new(&input);
@@ -307,15 +297,15 @@ if (5 < 10) {
 10 != 9;");
 
         let tokens = vec![
-            Token { ttype: TokenType::Int, literal: "10".to_string() },
-            Token { ttype: TokenType::Eq, literal: "==".to_string() },
-            Token { ttype: TokenType::Int, literal: "10".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::Int, literal: "10".to_string() },
-            Token { ttype: TokenType::NotEq, literal: "!=".to_string() },
-            Token { ttype: TokenType::Int, literal: "9".to_string() },
-            Token { ttype: TokenType::SemiColon, literal: ";".to_string() },
-            Token { ttype: TokenType::Eof, literal: "".to_string() },
+            Token::Int(String::from("10")),
+            Token::Eq("==".to_string()),
+            Token::Int(String::from("10")),
+            Token::SemiColon(";".to_string()),
+            Token::Int(String::from("10")),
+            Token::NotEq("!=".to_string()),
+            Token::Int(String::from("9")),
+            Token::SemiColon(";".to_string()),
+            Token::Eof,
         ];
 
         let mut l = Lexer::new(&input);
