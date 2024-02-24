@@ -1,4 +1,4 @@
-use crate::tokens;
+use crate::tokens::Token;
 
 pub trait Node {
     fn token_literal(&self) -> String;
@@ -7,25 +7,35 @@ pub trait Node {
 
 #[derive(Debug)]
 pub enum Statement {
-    Let(LetStatement),
-    Return(ReturnStatement),
-    Expression(ExpressionStatement),
+    Let { token: Token, identifier: Token },
+    // Return(ReturnStatement),
+    // Expression(ExpressionStatement),
 }
 
 impl Node for Statement {
     fn token_literal(&self) -> String {
         match self {
-            Statement::Let(stmt) => stmt.token.literal.to_owned(),
-            Statement::Return(stmt) => stmt.token.literal.to_owned(),
-            Statement::Expression(stmt) => stmt.token.literal.to_owned(),
+            Statement::Let { token, .. } => token.string(),
+            // Statement::Return(stmt) => stmt.token.literal.to_owned(),
+            // Statement::Expression(stmt) => stmt.token.literal.to_owned(),
         }
     }
 
     fn string(&self) -> String {
+        let mut buffer = String::new();
+
         match self {
-            Statement::Let(stmt) => stmt.string(),
-            Statement::Return(stmt) => stmt.string(),
-            Statement::Expression(stmt) => stmt.string(),
+            Statement::Let { token, identifier } => {
+
+                buffer.push_str(&token.string());
+                buffer.push_str(" ");
+                buffer.push_str(&identifier.string());
+                buffer.push_str(" = ");
+                // TODO: expression value string
+                buffer.push_str(";");
+
+                buffer
+            },
         }
     }
 }
@@ -33,9 +43,9 @@ impl Node for Statement {
 impl Statement {
     pub fn name_token_literal(&self) -> String {
         match self {
-            Statement::Let(stmt) => stmt.name.token.literal.to_owned(),
-            Statement::Return(_) => panic!("Return statement does not have name field"),
-            Statement::Expression(_) => panic!("Return statement does not have name field")
+            Statement::Let { token, .. } => token.string(),
+            // Statement::Return(_) => panic!("Return statement does not have name field"),
+            // Statement::Expression(_) => panic!("Return statement does not have name field")
         }
     }
 }
@@ -63,85 +73,51 @@ impl Node for Program {
     }
 }
 
-#[derive(Debug)]
-pub struct LetStatement {
-    pub token: tokens::Token,
-    pub name: Identifier,
-    // pub value: Identifier,
-}
-
-impl LetStatement {
-    fn string(&self) -> String {
-        let mut buffer = String::new();
-
-        buffer.push_str(&self.token.literal);
-        buffer.push_str(" ");
-        buffer.push_str(&self.name.token.literal);
-        buffer.push_str(" = ");
-        // TODO: expression value string
-        buffer.push_str(";");
-
-        buffer
-    }
-}
-
-#[derive(Debug)]
-pub struct Identifier {
-    pub token: tokens::Token,
-    pub value: String,
-}
-
-impl Identifier {
-    fn string(&self) -> String {
-        self.value.to_string()
-    }
-}
-
-#[derive(Debug)]
-pub struct ReturnStatement {
-    pub token: tokens::Token,
-    // pub value: Expression,
-}
-
-impl ReturnStatement {
-    fn string(&self) -> String {
-        let mut buffer = String::new();
-
-        buffer.push_str(&self.token.literal);
-        buffer.push_str(" ");
-        // TODO: expression value string
-        buffer.push_str(";");
-
-        buffer
-    }
-}
-
-#[derive(Debug)]
-pub struct ExpressionStatement {
-    pub token: tokens::Token,
-    pub expression: Expression,
-}
-
-impl ExpressionStatement {
-    fn string(&self) -> String {
-        let mut buffer = String::new();
-
-        buffer.push_str(&self.expression.string());
-
-        buffer
-    }
-}
-
-#[derive(Debug)]
-pub enum Expression {
-    Identifier(Identifier)
-}
-
-impl Expression {
-    fn string(&self) -> String {
-        todo!()
-    }
-}
+// #[derive(Debug)]
+// pub struct ReturnStatement {
+//     pub token: tokens::Token,
+//     // pub value: Expression,
+// }
+//
+// impl ReturnStatement {
+//     fn string(&self) -> String {
+//         let mut buffer = String::new();
+//
+//         buffer.push_str(&self.token.literal);
+//         buffer.push_str(" ");
+//         // TODO: expression value string
+//         buffer.push_str(";");
+//
+//         buffer
+//     }
+// }
+//
+// #[derive(Debug)]
+// pub struct ExpressionStatement {
+//     pub token: tokens::Token,
+//     pub expression: Expression,
+// }
+//
+// impl ExpressionStatement {
+//     fn string(&self) -> String {
+//         let mut buffer = String::new();
+//
+//         buffer.push_str(&self.expression.string());
+//
+//         buffer
+//     }
+// }
+//
+// #[derive(Debug)]
+// pub enum Expression {
+//     Identifier(Identifier)
+// }
+//
+// impl Expression {
+//     fn string(&self) -> String {
+//         todo!()
+//     }
+// }
 
 #[cfg(test)]
 mod test{
@@ -151,19 +127,10 @@ mod test{
     fn string() {
         let program = Program {
             statements: vec![
-                Statement::Let(LetStatement {
-                    token: tokens::Token {
-                        ttype: tokens::TokenType::Let,
-                        literal: String::from("let"),
-                    },
-                    name: Identifier {
-                        token: tokens::Token {
-                            ttype: tokens::TokenType::Ident,
-                            literal: String::from("myVar")
-                        },
-                        value: String::from("myVar")
-                    }
-                })
+                Statement::Let {
+                    token: Token::Let("let".to_string()),
+                    identifier: Token::Ident("myVar".to_string()),
+                }
             ]
         };
 
