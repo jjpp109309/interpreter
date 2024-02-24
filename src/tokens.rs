@@ -1,60 +1,147 @@
+// #[derive(Debug, PartialEq, Eq, Clone)]
+// pub enum TokenType {
+//     Illegal,
+//     Eof,
+//
+//     // identifieres + literals
+//     Ident,
+//     Int,
+//
+//     // operators
+//     Assign,
+//     Plus,
+//     Minus,
+//     Bang,
+//     Asterisk,
+//     Slash,
+//
+//     Lt,
+//     Gt,
+//
+//     // delimiters
+//     Comma,
+//     SemiColon,
+//     LParen,
+//     RParen,
+//     LBrace,
+//     RBrace,
+//
+//     // keywords
+//     Function,
+//     Let,
+//     True,
+//     False,
+//     If,
+//     Else,
+//     Return,
+//     Eq,
+//     NotEq,
+// }
+//
+// impl TokenType {
+//     pub fn lookup_ident(literal: &String) -> TokenType {
+//         match literal.as_str() {
+//             "fn" => Self::Function,
+//             "let" => Self::Let,
+//             "true" => Self::True,
+//             "false" => Self::False,
+//             "if" => Self::If,
+//             "else" => Self::Else,
+//             "return" => Self::Return,
+//             _ => Self::Ident
+//         }
+//     }
+// }
+//
+// #[derive(Debug, PartialEq, Eq, Clone)]
+// pub struct Token {
+//     pub ttype: TokenType,
+//     pub literal: String,
+// }
+
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub enum TokenType {
-    Illegal,
+pub enum Token {
+    Illegal(String),
     Eof,
 
     // identifieres + literals
-    Ident,
-    Int,
+    Ident(String),
+    Int(String),
 
     // operators
-    Assign,
-    Plus,
-    Minus,
-    Bang,
-    Asterisk,
-    Slash,
-
-    Lt,
-    Gt,
+    Assign(String),
+    Plus(String),
+    Minus(String),
+    Bang(String),
+    Asterisk(String),
+    Slash(String),
+    Lt(String),
+    Gt(String),
 
     // delimiters
-    Comma,
-    SemiColon,
-    LParen,
-    RParen,
-    LBrace,
-    RBrace,
+    Comma(String),
+    SemiColon(String),
+    LParen(String),
+    RParen(String),
+    LBrace(String),
+    RBrace(String),
 
     // keywords
-    Function,
-    Let,
-    True,
-    False,
-    If,
-    Else,
-    Return,
-    Eq,
-    NotEq,
+    Function(String),
+    Let(String),
+    True(String),
+    False(String),
+    If(String),
+    Else(String),
+    Return(String),
+    Eq(String),
+    NotEq(String),
 }
 
-impl TokenType {
-    pub fn lookup_ident(literal: &String) -> TokenType {
-        match literal.as_str() {
-            "fn" => Self::Function,
-            "let" => Self::Let,
-            "true" => Self::True,
-            "false" => Self::False,
-            "if" => Self::If,
-            "else" => Self::Else,
-            "return" => Self::Return,
-            _ => Self::Ident
+impl Token {
+    pub fn lookup_ident(string: &String) -> Token {
+        let literal = string.to_string();
+        match string.as_str() {
+            "fn" => Self::Function(literal),
+            "let" => Self::Let(literal),
+            "true" => Self::True(literal),
+            "false" => Self::False(literal),
+            "if" => Self::If(literal),
+            "else" => Self::Else(literal),
+            "return" => Self::Return(literal),
+            _ => Self::Ident(literal),
         }
     }
-}
 
-#[derive(Debug, PartialEq, Eq, Clone)]
-pub struct Token {
-    pub ttype: TokenType,
-    pub literal: String,
+    pub fn string(&self) -> String {
+        match self {
+            Token::Illegal(s) => s.to_string(),
+            Token::Eof => "".to_string(),
+            Token::Ident(s) => s.to_string(),
+            Token::Int(s) => s.to_string(),
+            Token::Assign(s) => s.to_string(),
+            Token::Plus(s) => s.to_string(),
+            Token::Minus(s) => s.to_string(),
+            Token::Bang(s) => s.to_string(),
+            Token::Asterisk(s) => s.to_string(),
+            Token::Slash(s) => s.to_string(),
+            Token::Lt(s) => s.to_string(),
+            Token::Gt(s) => s.to_string(),
+            Token::Comma(s) => s.to_string(),
+            Token::SemiColon(s) => s.to_string(),
+            Token::LParen(s) => s.to_string(),
+            Token::RParen(s) => s.to_string(),
+            Token::LBrace(s) => s.to_string(),
+            Token::RBrace(s) => s.to_string(),
+            Token::Function(s) => s.to_string(),
+            Token::Let(s) => s.to_string(),
+            Token::True(s) => s.to_string(),
+            Token::False(s) => s.to_string(),
+            Token::If(s) => s.to_string(),
+            Token::Else(s) => s.to_string(),
+            Token::Return(s) => s.to_string(),
+            Token::Eq(s) => s.to_string(),
+            Token::NotEq(s) => s.to_string(),
+        }
+    }
 }
