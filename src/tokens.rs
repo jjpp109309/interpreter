@@ -55,9 +55,41 @@ impl Token {
     pub fn string(&self) -> String {
         match self {
             Token::Illegal(s) => s.to_string(),
-            Token::Eof => "".to_string(),
             Token::Ident(s) => s.to_string(),
             Token::Int(s) => s.to_string(),
+            Token::Eof => Self::name(&Token::Eof),
+            Token::Assign => Self::name(&Token::Assign),
+            Token::Plus => Self::name(&Token::Plus),
+            Token::Minus => Self::name(&Token::Minus),
+            Token::Bang => Self::name(&Token::Bang),
+            Token::Asterisk => Self::name(&Token::Asterisk),
+            Token::Slash => Self::name(&Token::Slash),
+            Token::Lt => Self::name(&Token::Lt),
+            Token::Gt => Self::name(&Token::Gt),
+            Token::Comma => Self::name(&Token::Comma),
+            Token::SemiColon => Self::name(&Token::SemiColon),
+            Token::LParen => Self::name(&Token::LParen),
+            Token::RParen => Self::name(&Token::RParen),
+            Token::LBrace => Self::name(&Token::LBrace),
+            Token::RBrace => Self::name(&Token::RBrace),
+            Token::Function => Self::name(&Token::Function),
+            Token::Let => Self::name(&Token::Let),
+            Token::True => Self::name(&Token::True),
+            Token::False => Self::name(&Token::False),
+            Token::If => Self::name(&Token::If),
+            Token::Else => Self::name(&Token::Else),
+            Token::Return => Self::name(&Token::Return),
+            Token::Eq => Self::name(&Token::Eq),
+            Token::NotEq => Self::name(&Token::NotEq),
+        }
+    }
+    
+    pub fn name(token: &Token) -> String {
+        match token {
+            Token::Illegal(s) => "illegal".to_string(),
+            Token::Ident(s) => "identifier".to_string(),
+            Token::Int(s) => "integer".to_string(),
+            Token::Eof => "".to_string(),
             Token::Assign => "=".to_string(),
             Token::Plus => "+".to_string(),
             Token::Minus => "-".to_string(),

@@ -1,23 +1,42 @@
 use crate::tokens::Token;
 use crate::lexer::Lexer;
-use crate::ast;
+use crate::ast::{Statement, Program};
 use std::collections::HashMap;
 use crate::expressions::Expression;
 
 type PrefixFn = fn() -> Expression;
 type InfixFn = fn(Expression) -> Expression;
 
-enum ParseFn {
-    Infix(InfixFn),
-    Prefix(PrefixFn),
+pub enum Precedence {
+    LOWEST,
+    EQUALS,
+    LESSGREATER,
+    SUM,
+    PRODUCT,
+    PREFIX,
+    CALL,
+}
+
+impl Precedence {
+    fn rank(&self) -> u8 {
+        match self {
+            Precedence::LOWEST => 0,
+            Precedence::EQUALS => 1,
+            Precedence::LESSGREATER => 2,
+            Precedence::SUM => 3,
+            Precedence::PRODUCT => 4,
+            Precedence::PREFIX => 5,
+            Precedence::CALL => 6,
+        }
+    }
 }
 
 struct Parser {
     lexer: Lexer,
     cur_token: Token,
     peek_token: Token,
-    prefix_parse_fns: HashMap<Token, PrefixFn>,
-    infix_parse_fns: HashMap<Token, InfixFn>,
+    prefix_parse_fns: HashMap<String, fn(&Token)->Token>,
+    // infix_parse_fns: HashMap<String, fn()>,
 }
 
 impl Parser {
@@ -26,9 +45,11 @@ impl Parser {
         let peek_token = l.next_token();
 
         let prefix_parse_fns = HashMap::new();
-        let infix_parse_fns = HashMap::new();
+        // let infix_parse_fns = HashMap::new();
 
-        Parser { lexer: l, cur_token, peek_token, prefix_parse_fns, infix_parse_fns }
+        prefix_parse_fns.insert("identifier".to_string(), parse_identifier);
+
+        Parser { lexer: l, cur_token, peek_token, prefix_parse_fns }
     } 
 
     fn next_token(&mut self) {
@@ -36,8 +57,8 @@ impl Parser {
         self.peek_token = self.lexer.next_token();
     }
 
-    fn parse_program(mut self) -> ast::Program {
-        let mut statements: Vec<ast::Statement> = vec![];
+    fn parse_program(mut self) -> Program {
+        let mut statements: Vec<Statement> = vec![];
 
         while self.cur_token != Token::Eof {
             let statement = self.parse_statement();
@@ -46,10 +67,10 @@ impl Parser {
             self.next_token();
         }
 
-        ast::Program { statements }
+        Program { statements }
     }
 
-    fn parse_statement(&mut self) -> ast::Statement {
+    fn parse_statement(&mut self) -> Statement {
         match self.cur_token {
             Token::Let => self.parse_let_statement(),
             Token::Return => self.parse_return_statement(),
@@ -57,7 +78,7 @@ impl Parser {
         }
     }
 
-    fn parse_let_statement(&mut self) -> ast::Statement {
+    fn parse_let_statement(&mut self) -> Statement {
         let token = self.cur_token.clone();
 
         match self.peek_token {
@@ -81,10 +102,10 @@ impl Parser {
             }
         }
 
-        ast::Statement::Let { token, identifier }
+        Statement::Let { token, identifier }
     }
 
-    fn parse_return_statement(&mut self) -> ast::Statement {
+    fn parse_return_statement(&mut self) -> Statement {
         let token = self.cur_token.clone();
 
         self.next_token();
@@ -98,22 +119,31 @@ impl Parser {
             }
         }
 
-        ast::Statement::Return { token }
+        Statement::Return { token }
     }
 
-    fn parse_expression_statement(&mut self) -> ast::Statement {
-        todo!()
+    fn parse_expression_statement(&mut self) -> Statement {
+        let token = self.cur_token.clone();
+        let expression = self.parse_expression(Precedence::LOWEST);
+
+        match self.cur_token {
+            Token::SemiColon => self.next_token(),
+            _ => {},
+        }
+
+        Statement::Expression { token, expression }
     }
 
-    fn register_parse_fn(&mut self, token_type: Token, func: ParseFn) {
-        match func {
-            ParseFn::Infix(f) => {
-                self.infix_parse_fns.insert(token_type, f);
-            },
-            ParseFn::Prefix(f) => {
-                self.prefix_parse_fns.insert(token_type, f);
-            },
-        };
+    fn parse_expression(&self, precedence: Precedence) -> Expression {
+        let token_name = Token::name(&self.cur_token)
+        self.prefix_parse_fns.get(&self.cur_token).unwrap()()
+    }
+}
+
+fn parse_identifier(cur_token: &Token) -> Token {
+    match cur_token {
+        Token::Ident(_) => cur_token.clone(),
+        _ => panic!("Token is not identifier, got {:?}", cur_token),
     }
 }
 
@@ -176,32 +206,33 @@ return 3301;");
         }
     }
 
-//     #[test]
-//     fn identifier_statement() {
-//         let input = String::from("\
-// foobar;");
-//
-//         let l = Lexer::new(&input);
-//         let p = Parser::new(l);
-//         let program = p.parse_program();
-//
-//         let n = program.statements.len();
-//         assert_eq!(n, 1, "Program has not enough statements. Got {}", n);
-//
-//         let statement = &program.statements[0];
-//
-//         match statement {
-//             ast::Statement::Expression { expression, .. } => {
-//                 match expression {
-//                     Token::Ident(i) => {
-//                         if i != &String::from("foobar") {
-//                             panic!("Identifier value not correct. Got {:?}", i)
-//                         }
-//                     },
-//                     _ => panic!("Expression not identifier")
-//                 }
-//             },
-//             s => panic!("Statement not expression. Got {:?}", s),
-//         };
-//     }
+    #[test]
+    fn identifier_statement() {
+        let input = String::from("\
+foobar;");
+
+        let l = Lexer::new(&input);
+        let p = Parser::new(l);
+        let program = p.parse_program();
+
+        let n = program.statements.len();
+        assert_eq!(n, 1, "Program has not enough statements. Got {}", n);
+        println!("statements {:?}", program.statements);
+
+        let statement = &program.statements[0];
+
+        // match statement {
+        //     Statement::Expression { expression, .. } => {
+        //         match expression {
+        //             Token::Ident(i) => {
+        //                 if i != &String::from("foobar") {
+        //                     panic!("Identifier value not correct. Got {:?}", i)
+        //                 }
+        //             },
+        //             _ => panic!("Expression not identifier")
+        //         }
+        //     },
+        //     s => panic!("Statement not expression. Got {:?}", s),
+        // };
+    }
 }
