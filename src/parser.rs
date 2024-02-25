@@ -2,9 +2,10 @@ use crate::tokens::Token;
 use crate::lexer::Lexer;
 use crate::ast;
 use std::collections::HashMap;
+use crate::expressions::Expression;
 
-type PrefixFn = fn() -> ast::Expression;
-type InfixFn = fn(ast::Expression) -> ast::Expression;
+type PrefixFn = fn() -> Expression;
+type InfixFn = fn(Expression) -> Expression;
 
 enum ParseFn {
     Infix(InfixFn),
@@ -15,8 +16,8 @@ struct Parser {
     lexer: Lexer,
     cur_token: Token,
     peek_token: Token,
-    prefix_parse_fns: HashMap<String, PrefixFn>,
-    infix_parse_fns: HashMap<String, InfixFn>,
+    prefix_parse_fns: HashMap<Token, PrefixFn>,
+    infix_parse_fns: HashMap<Token, InfixFn>,
 }
 
 impl Parser {
@@ -50,8 +51,8 @@ impl Parser {
 
     fn parse_statement(&mut self) -> ast::Statement {
         match self.cur_token {
-            Token::Let(_) => self.parse_let_statement(),
-            Token::Return(_) => self.parse_return_statement(),
+            Token::Let => self.parse_let_statement(),
+            Token::Return => self.parse_return_statement(),
             _ => self.parse_expression_statement(),
         }
     }
@@ -67,7 +68,7 @@ impl Parser {
         let identifier = self.cur_token.clone();
 
         match self.peek_token {
-            Token::Assign(_) => self.next_token(),
+            Token::Assign => self.next_token(),
             _ => panic!("Next token not Ident")
         }
 
@@ -75,7 +76,7 @@ impl Parser {
 
         loop {
             match self.cur_token {
-                Token::SemiColon(_) => break,
+                Token::SemiColon => break,
                 _ => self.next_token(),
             }
         }
@@ -92,7 +93,7 @@ impl Parser {
 
         loop {
             match self.cur_token {
-                Token::SemiColon(_) => break,
+                Token::SemiColon => break,
                 _ => self.next_token(),
             }
         }
@@ -100,15 +101,17 @@ impl Parser {
         ast::Statement::Return { token }
     }
 
-    fn parse_expression_statement(&mut self) -> ast::Statement {todo!()}
+    fn parse_expression_statement(&mut self) -> ast::Statement {
+        todo!()
+    }
 
-    fn register_parse_fn(&mut self, token_type: &String, func: ParseFn) {
+    fn register_parse_fn(&mut self, token_type: Token, func: ParseFn) {
         match func {
             ParseFn::Infix(f) => {
-                self.infix_parse_fns.insert(token_type.to_string(), f);
+                self.infix_parse_fns.insert(token_type, f);
             },
             ParseFn::Prefix(f) => {
-                self.prefix_parse_fns.insert(token_type.to_string(), f);
+                self.prefix_parse_fns.insert(token_type, f);
             },
         };
     }

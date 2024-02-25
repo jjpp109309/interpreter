@@ -45,31 +45,31 @@ impl Lexer {
             "=" => {
                 if Self::next_char_is_eq(&self) {
                     self.read_char();
-                    Token::Eq("==".to_string())
+                    Token::Eq
                 } else {
-                    Token::Assign("=".to_string())
+                    Token::Assign
                 }
             },
-            ";" => Token::SemiColon(";".to_string()),
-            "(" => Token::LParen("(".to_string()),
-            ")" => Token::RParen(")".to_string()),
-            "," => Token::Comma(",".to_string()),
-            "+" => Token::Plus("+".to_string()),
-            "-" => Token::Minus("-".to_string()),
-            "*" => Token::Asterisk("*".to_string()),
+            ";" => Token::SemiColon,
+            "(" => Token::LParen,
+            ")" => Token::RParen,
+            "," => Token::Comma,
+            "+" => Token::Plus,
+            "-" => Token::Minus,
+            "*" => Token::Asterisk,
             "!" => {
                 if Self::next_char_is_eq(&self) {
                     self.read_char();
-                    Token::NotEq("!=".to_string())
+                    Token::NotEq
                 } else {
-                    Token::Bang("!".to_string())
+                    Token::Bang
                 }
             }
-            "/" => Token::Slash("/".to_string()),
-            "<" => Token::Lt("<".to_string()),
-            ">" => Token::Gt(">".to_string()),
-            "{" => Token::LBrace("{".to_string()),
-            "}" => Token::RBrace("}".to_string()),
+            "/" => Token::Slash,
+            "<" => Token::Lt,
+            ">" => Token::Gt,
+            "{" => Token::LBrace,
+            "}" => Token::RBrace,
             "" => Token::Eof,
             _ => {
                 if Self::is_letter(&self.ch) {
@@ -140,15 +140,15 @@ mod test {
     fn next_token() {
         let input = String::from("=+(){}!,;");
         let tokens = vec![
-            Token::Assign("=".to_string()),
-            Token::Plus("+".to_string()),
-            Token::LParen("(".to_string()),
-            Token::RParen(")".to_string()),
-            Token::LBrace("{".to_string()),
-            Token::RBrace("}".to_string()),
-            Token::Bang("!".to_string()),
-            Token::Comma(",".to_string()),
-            Token::SemiColon(";".to_string()),
+            Token::Assign,
+            Token::Plus,
+            Token::LParen,
+            Token::RParen,
+            Token::LBrace,
+            Token::RBrace,
+            Token::Bang,
+            Token::Comma,
+            Token::SemiColon,
             Token::Eof,
         ];
 
@@ -172,42 +172,42 @@ let add = fn(x, y) {
 let result = add(five, ten);");
 
         let tokens = vec![
-            Token::Let("let".to_string()),
+            Token::Let,
             Token::Ident(String::from("five")),
-            Token::Assign("=".to_string()),
+            Token::Assign,
             Token::Int(String::from("5")),
-            Token::SemiColon(";".to_string()),
-            Token::Let("let".to_string()),
+            Token::SemiColon,
+            Token::Let,
             Token::Ident(String::from("ten")),
-            Token::Assign("=".to_string()),
+            Token::Assign,
             Token::Int(String::from("10")),
-            Token::SemiColon(";".to_string()),
-            Token::Let("let".to_string()),
+            Token::SemiColon,
+            Token::Let,
             Token::Ident(String::from("add")),
-            Token::Assign("=".to_string()),
-            Token::Function("fn".to_string()),
-            Token::LParen("(".to_string()),
+            Token::Assign,
+            Token::Function,
+            Token::LParen,
             Token::Ident(String::from("x")),
-            Token::Comma(",".to_string()),
+            Token::Comma,
             Token::Ident(String::from("y")),
-            Token::RParen(")".to_string()),
-            Token::LBrace("{".to_string()),
+            Token::RParen,
+            Token::LBrace,
             Token::Ident(String::from("x")),
-            Token::Plus("+".to_string()),
+            Token::Plus,
             Token::Ident(String::from("y")),
-            Token::SemiColon(";".to_string()),
-            Token::RBrace("}".to_string()),
-            Token::SemiColon(";".to_string()),
-            Token::Let("let".to_string()),
+            Token::SemiColon,
+            Token::RBrace,
+            Token::SemiColon,
+            Token::Let,
             Token::Ident(String::from("result")),
-            Token::Assign("=".to_string()),
+            Token::Assign,
             Token::Ident(String::from("add")),
-            Token::LParen("(".to_string()),
+            Token::LParen,
             Token::Ident(String::from("five")),
-            Token::Comma(",".to_string()),
+            Token::Comma,
             Token::Ident(String::from("ten")),
-            Token::RParen(")".to_string()),
-            Token::SemiColon(";".to_string()),
+            Token::RParen,
+            Token::SemiColon,
             Token::Eof, 
         ];
 
@@ -227,18 +227,18 @@ let result = add(five, ten);");
 5 < 10 > 5;");
 
         let tokens = vec![
-            Token::Bang("!".to_string()),
-            Token::Minus("-".to_string()),
-            Token::Slash("/".to_string()),
-            Token::Asterisk("*".to_string()),
+            Token::Bang,
+            Token::Minus,
+            Token::Slash,
+            Token::Asterisk,
             Token::Int(String::from("5")),
-            Token::SemiColon(";".to_string()),
+            Token::SemiColon,
             Token::Int(String::from("5")),
-            Token::Lt("<".to_string()),
+            Token::Lt,
             Token::Int(String::from("10")),
-            Token::Gt(">".to_string()),
+            Token::Gt,
             Token::Int(String::from("5")),
-            Token::SemiColon(";".to_string()),
+            Token::SemiColon,
             Token::Eof, 
         ];
 
@@ -261,23 +261,23 @@ if (5 < 10) {
 }");
 
         let tokens = vec![
-            Token::If("if".to_string()),
-            Token::LParen("(".to_string()),
+            Token::If,
+            Token::LParen,
             Token::Int(String::from("5")),
-            Token::Lt("<".to_string()),
+            Token::Lt,
             Token::Int(String::from("10")),
-            Token::RParen(")".to_string()),
-            Token::LBrace("{".to_string()),
-            Token::Return("return".to_string()),
-            Token::True("true".to_string()),
-            Token::SemiColon(";".to_string()),
-            Token::RBrace("}".to_string()),
-            Token::Else("else".to_string()),
-            Token::LBrace("{".to_string()),
-            Token::Return("return".to_string()),
-            Token::False("false".to_string()),
-            Token::SemiColon(";".to_string()),
-            Token::RBrace("}".to_string()),
+            Token::RParen,
+            Token::LBrace,
+            Token::Return,
+            Token::True,
+            Token::SemiColon,
+            Token::RBrace,
+            Token::Else,
+            Token::LBrace,
+            Token::Return,
+            Token::False,
+            Token::SemiColon,
+            Token::RBrace,
             Token::Eof, 
         ];
 
@@ -298,13 +298,13 @@ if (5 < 10) {
 
         let tokens = vec![
             Token::Int(String::from("10")),
-            Token::Eq("==".to_string()),
+            Token::Eq,
             Token::Int(String::from("10")),
-            Token::SemiColon(";".to_string()),
+            Token::SemiColon,
             Token::Int(String::from("10")),
-            Token::NotEq("!=".to_string()),
+            Token::NotEq,
             Token::Int(String::from("9")),
-            Token::SemiColon(";".to_string()),
+            Token::SemiColon,
             Token::Eof,
         ];
 

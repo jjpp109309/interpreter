@@ -1,4 +1,5 @@
 use crate::tokens::Token;
+use crate::expressions::Expression;
 
 pub trait Node {
     fn token_literal(&self) -> String;
@@ -82,23 +83,6 @@ impl Node for Program {
     }
 }
 
-#[derive(Debug)]
-pub enum Expression {
-    Prefix,
-    Infix,
-}
-
-impl Node for Expression {
-    fn token_literal(&self) -> String {
-        todo!()
-    }
-
-    fn string(&self) -> String {
-        todo!()
-    }
-}
-
-
 #[cfg(test)]
 mod test{
     use super::*;
@@ -108,7 +92,7 @@ mod test{
         let program = Program {
             statements: vec![
                 Statement::Let {
-                    token: Token::Let("let".to_string()),
+                    token: Token::Let,
                     identifier: Token::Ident("myVar".to_string()),
                 }
             ]
