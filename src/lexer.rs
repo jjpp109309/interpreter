@@ -78,7 +78,7 @@ impl Lexer {
 
                 } else if Self::is_digit(&self.ch) {
                     let literal = self.read_number();
-                    Token::Int(literal)
+                    Token::Int(literal.into())
                 } else {
                     Token::Illegal(self.ch.to_string())
                 }
@@ -118,13 +118,13 @@ impl Lexer {
         "1234567890".contains(character)
     }
 
-    pub fn read_number(&mut self) -> String {
+    pub fn read_number(&mut self) -> i32 {
         let position = self.position;
 
         while Self::is_digit(&self.input[self.read_position]) {
             self.read_char();
         };
-        self.input[position..self.read_position].join("")
+        self.input[position..self.read_position].join("").parse::<i32>().unwrap()
     }
 
     pub fn next_char_is_eq(&self) -> bool {
@@ -175,12 +175,12 @@ let result = add(five, ten);");
             Token::Let,
             Token::Ident(String::from("five")),
             Token::Assign,
-            Token::Int(String::from("5")),
+            Token::Int(5),
             Token::SemiColon,
             Token::Let,
             Token::Ident(String::from("ten")),
             Token::Assign,
-            Token::Int(String::from("10")),
+            Token::Int(10),
             Token::SemiColon,
             Token::Let,
             Token::Ident(String::from("add")),
@@ -231,13 +231,13 @@ let result = add(five, ten);");
             Token::Minus,
             Token::Slash,
             Token::Asterisk,
-            Token::Int(String::from("5")),
+            Token::Int(5),
             Token::SemiColon,
-            Token::Int(String::from("5")),
+            Token::Int(5),
             Token::Lt,
-            Token::Int(String::from("10")),
+            Token::Int(10),
             Token::Gt,
-            Token::Int(String::from("5")),
+            Token::Int(5),
             Token::SemiColon,
             Token::Eof, 
         ];
@@ -263,9 +263,9 @@ if (5 < 10) {
         let tokens = vec![
             Token::If,
             Token::LParen,
-            Token::Int(String::from("5")),
+            Token::Int(5),
             Token::Lt,
-            Token::Int(String::from("10")),
+            Token::Int(10),
             Token::RParen,
             Token::LBrace,
             Token::Return,
@@ -297,13 +297,13 @@ if (5 < 10) {
 10 != 9;");
 
         let tokens = vec![
-            Token::Int(String::from("10")),
+            Token::Int(10),
             Token::Eq,
-            Token::Int(String::from("10")),
+            Token::Int(10),
             Token::SemiColon,
-            Token::Int(String::from("10")),
+            Token::Int(10),
             Token::NotEq,
-            Token::Int(String::from("9")),
+            Token::Int(9),
             Token::SemiColon,
             Token::Eof,
         ];
